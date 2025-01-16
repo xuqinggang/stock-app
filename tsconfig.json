@@ -6,9 +6,11 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
-      "@shared/*": ["./shared/*"]
+      "@shared/*": ["./shared/*"],
+      "@api/*": ["./api/lambda/*"],
+      "@python/*": ["./api/python/*"]
     }
   },
-  "include": ["src", "shared", "config", "modern.config.ts"],
+  "include": ["src", "shared", "api", "config", "modern.config.ts"],
   "exclude": ["**/node_modules"]
 }
