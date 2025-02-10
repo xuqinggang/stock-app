@@ -1,55 +1,67 @@
 import { useEffect, useState, useMemo } from "react";
 import { VChart as VChartComp } from "@visactor/react-vchart";
+import { Select, Space } from "antd";
+import { useMemoizedFn } from "ahooks";
+import { IDimsCondition } from "@/types";
 
-import { get as hello } from "@api/hello";
-import { get as getDayK } from "@api/get_day_k";
+import { IUpStockItemInfo } from "@api/types";
 import VChart, { ILineChartSpec } from "@visactor/vchart";
-import "./index.css";
+import { KLineChart } from "@/components/kline-chart";
+import { MultiLineChart } from "@/components/multi-line-chart";
+import { formatStocksToMultiLine } from "@/utils/format";
+import { useGetUpStocks } from "@/hooks/use-get-upstocks";
+import { StocksProvider } from "@/provider/stocks-provider";
+import { FilterForm } from "@/components/filter-form";
+import { observer } from "mobx-react-lite";
+import { useStocks } from "@/provider/stocks-provider";
+import { formatStocksByIndicatorDims } from "@/utils/format";
+import { SelectStocksModule } from "@/components/select-stocks-module";
 
-const Index = () => {
-  const [multiValues, setMultiValues] = useState([
-    [1, 3, 8, 19],
-    [1, 2, 8],
-  ]);
-  const spec: ILineChartSpec = useMemo(() => {
-    // const maxItems = multiValues.reduce((acc, item) => item?.length > acc ? item.length : acc, 0)
-    const values: any = [];
-    multiValues?.forEach((groupValues, groupKey) => {
-      groupValues?.forEach((yValue, xKey) => {
-        values.push({
-          x: xKey + 1,
-          y: yValue,
-          group: `group_${groupKey}`,
-        });
-      });
-    });
-    return {
-      type: "line",
-      // padding: 16,
-      width: 1000,
-      height: 500,
-      data: {
-        values,
-      },
-      xField: "x",
-      yField: "y",
-      seriesField: "group",
-      line: {
-        style: {
-          curveType: "monotone",
-        },
-      },
-    };
-  }, [multiValues]);
+const Index = observer(() => {
+  const { stocksStore } = useStocks();
+  const { stocks, stocksHotTopic, stockHotTopicMap, setDimsConditions, dimsConditions } = stocksStore;
+  console.log("xxxxstocks", stocks);
+
+  const [formatStocks, setFormatStocks] = useState<IUpStockItemInfo[]>([]);
+
+  const handleQuery = useMemoizedFn((dimsConditions: IDimsCondition[]) => {
+    console.log("xxxxxhandleQuery-dimsCondition", dimsConditions);
+    setDimsConditions(dimsConditions);
+    if (dimsConditions) {
+      const formatStocks = formatStocksByIndicatorDims(stocks, dimsConditions);
+      setFormatStocks(formatStocks);
+      console.log("xxxxxhandleQuery-formatStocks", formatStocks);
+    }
+  });
+
   useEffect(() => {
-    hello();
-    getDayK({});
   }, []);
+  // console.log("xxxxxmul", multiLine, data);
   return (
-    <div className="container-box">
-      <VChartComp spec={spec} />
-    </div>
+    <StocksProvider>
+      <div className="flex">
+        <div className="w-[720px]">
+          <FilterForm onQuery={handleQuery} />
+        </div>
+        <div>
+          <SelectStocksModule stocks={stocks} stockHotTopicMap={stockHotTopicMap} formatStocks={formatStocks} dimsConditions={dimsConditions}/>
+        </div>
+        {/* <Select
+          mode="multiple"
+          allowClear
+          style={{ width: "800px" }}
+          placeholder="Please select"
+          value={selectCodeStocks}
+          // defaultValue={['a10', 'c12']}
+          onChange={handleSelectStockChange}
+          options={options}
+        /> */}
+        {/* <MultiLineChart multiLine={multiLine} /> */}
+        {/* <VChartComp spec={spec} /> */}
+        {/* <KLineChart /> */}
+      </div>
+    </StocksProvider>
   );
-};
+});
 
 export default Index;

@@ -1,3 +1,4 @@
+import { tailwindcssPlugin } from '@modern-js/plugin-tailwindcss';
 import { appTools, defineConfig } from '@modern-js/app-tools';
 import { koaPlugin } from '@modern-js/plugin-koa';
 import { bffPlugin } from '@modern-js/plugin-bff';
@@ -12,5 +13,6 @@ export default defineConfig({
       bundler: 'rspack', // Set to 'webpack' to enable webpack
     }),
     koaPlugin(), bffPlugin(),
+    tailwindcssPlugin(),
   ],
 });

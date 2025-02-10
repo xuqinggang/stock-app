@@ -1,6 +1,7 @@
 {
   "extends": "@modern-js/tsconfig/base",
   "compilerOptions": {
+    "preserveConstEnums": true,
     "declaration": false,
     "jsx": "preserve",
     "baseUrl": "./",
@@ -8,7 +9,8 @@
       "@/*": ["./src/*"],
       "@shared/*": ["./shared/*"],
       "@api/*": ["./api/lambda/*"],
-      "@python/*": ["./api/python/*"]
+      "@python/*": ["./api/python/*"],
+      "@shell/*": ["./api/shell/*"]
     }
   },
   "include": ["src", "shared", "api", "config", "modern.config.ts"],

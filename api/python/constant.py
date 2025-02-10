@@ -1,0 +1,8 @@
+# 股东人数时间点 date="20210630"; choice of {"XXXX0331", "XXXX0630", "XXXX0930", "XXXX1231"}; 从 20170331 开始
+PARTNER_RECENT_PERIOD_DATE = "20240930"
+
+# 业绩报告时间点 date="20200331"; choice of {"XXXX0331", "XXXX0630", "XXXX0930", "XXXX1231"}; 从 20100331 开始
+# 2024年三季度报
+INCOME_YEAR_PERIOD_DATE = "20240930"
+# 历史行情时间范围 21 天前 ~ 至今
+HIST_DIFF_DAY = -42
