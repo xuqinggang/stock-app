@@ -28,7 +28,7 @@ const Index = observer(() => {
     console.log("xxxxxhandleQuery-dimsCondition", dimsConditions);
     setDimsConditions(dimsConditions);
     if (dimsConditions) {
-      const formatStocks = formatStocksByIndicatorDims(stocks, dimsConditions);
+      const formatStocks = formatStocksByIndicatorDims(stocks, dimsConditions, {stockHotTopicMap});
       setFormatStocks(formatStocks);
       console.log("xxxxxhandleQuery-formatStocks", formatStocks);
     }

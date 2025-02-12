@@ -25,12 +25,17 @@ interface IProps {
 export const FilterForm = observer((props: IProps) => {
   const { onQuery } = props;
   const [form] = Form.useForm();
-  const userName = Form.useWatch("dim_conditions", form);
-  console.log("xxxxxx000", userName);
+  // HACK: 监听以便重新渲染
+  const dimConditionsFormValues = Form.useWatch("dim_conditions", form);
 
   const { stocksStore } = useStocks();
-  const { enableRangeDate, dimsOptions, setStorage, getStorageFormValues } =
-    stocksStore;
+  const {
+    stocks,
+    enableRangeDate,
+    dimsOptions,
+    setStorage,
+    getStorageFormValues,
+  } = stocksStore;
 
   const handleQueryClick = useMemoizedFn(() => {
     const formValues = form.getFieldsValue();
@@ -39,7 +44,7 @@ export const FilterForm = observer((props: IProps) => {
       ...item,
       range_date: [
         item.range_date?.[0]?.valueOf(),
-        item.range_date?.[1].add(1, 'day')?.valueOf(),
+        item.range_date?.[1]?.add(1, "day")?.valueOf(),
       ],
     }));
     console.log("xxxxxx formValues", formValues, dimConditions);
@@ -63,7 +68,20 @@ export const FilterForm = observer((props: IProps) => {
     );
   });
 
+  // 计算行情天数
+  const computeHistDay = useMemoizedFn((name) => {
+    const dimConditionsValue = form.getFieldValue("dim_conditions");
+    const curGroupValue = dimConditionsValue[name];
+    const start_date = curGroupValue.range_date?.[0]?.valueOf();
+    const end_date =  curGroupValue.range_date?.[1]?.add(1, 'day')?.valueOf();
+    return stocks?.[0]?.hist?.filter(
+      (histItem) =>
+        histItem["日期"] >= start_date && histItem["日期"] <= end_date
+    )?.length;
+  });
+
   useEffect(() => {
+    if (!dimsOptions?.length) {return}
     const formValues = getStorageFormValues();
     console.log("xxxxxformValues", formValues);
     const initValues = formValues?.dim_conditions?.map((item: any) => ({
@@ -78,7 +96,7 @@ export const FilterForm = observer((props: IProps) => {
     });
     // HACK:待数据请求后
     setTimeout(() => handleQueryClick(), 1000);
-  }, []);
+  }, [dimsOptions]);
 
   const DEFAULT_DIM_CONDITION = {
     range_date: enableRangeDate,
@@ -146,6 +164,7 @@ export const FilterForm = observer((props: IProps) => {
                       name={[name, "range_date"]}
                       label="时间范围"
                       rules={[{ required: true }]}
+                      extra={`行情天数: ${computeHistDay(name)}`}
                     >
                       <RangePicker
                         disabled={ifDisabled}

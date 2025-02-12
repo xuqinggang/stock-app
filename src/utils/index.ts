@@ -1,5 +1,6 @@
 import { DIM_NAME, DIMS_INCLUDE } from "@shared/constant";
 
+// 获取股票代码板块
 export function getStockAttributionCode(code: string) {
   const { options } =
     DIMS_INCLUDE?.find(

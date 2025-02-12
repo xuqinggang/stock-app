@@ -2,10 +2,11 @@ import { IDayK } from "@api/types";
 
 export function genePoints() {}
 
-// 计算中位点的类型
+// 计算股票Y点的类型
 export enum EMedianPointType {
-  LOW_HIGH = "low_high",
-  OPEN_CLOSE = "open_close",
+  LOW_HIGH = "low_high", // 中位点 low + (high - low) /2
+  OPEN_CLOSE = "open_close", // 中位点 open + (close - open) /2
+  ONLY_CLOSE = "only_close", // close
 }
 
 export function getPointsByDayK(
@@ -16,6 +17,9 @@ export function getPointsByDayK(
     let start = Number(item["开盘"]),
       end = Number(item["收盘"]),
       min: number;
+    if (type === EMedianPointType.ONLY_CLOSE) {
+      return [index, end];
+    }
     if (type === EMedianPointType.OPEN_CLOSE) {
       start = Number(item["开盘"]);
       end = Number(item["收盘"]);

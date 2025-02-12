@@ -38,27 +38,38 @@ function judgeTrendByDifference(points: TPoints) {
   return positiveCount > negativeCount;
 }
 
-export function judgeIfUpTrend(points: TPoints) {
-  return judgeTrendByDifference(points) && judgeTrendByCurve(points);
+// 方法3：累计变化率法, 计算相邻点间的变化率并累加，反映过程中的总波动强度。
+function trendByTotalChange(points: TPoints) {
+  const sorted = points;
+  if (sorted.length < 2) return { isUp: false, percentage: 0 };
+  // if (sorted.length < 2) return { direction: 'neutral', percentage: 0 };
+
+  let total = 0;
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = sorted[i - 1][1];
+    const curr = sorted[i][1];
+    if (prev === 0) return { isUp: false, percentage: 0 };
+    // if (prev === 0) return { direction: 'neutral', percentage: 0 };
+    total += (curr - prev) / prev;
+  }
+
+  const percentage = total * 100;
+  return {
+    // direction: percentage > 0 ? 'up' : percentage < 0 ? 'down' : 'neutral',
+    isUp: percentage > 0 ? true : false,
+    percentage: Math.abs(percentage),
+  };
 }
 
-
-const closePrices = [100, 102, 105, 103, 104, 106, 108, 107, 109, 110];
-
-// 计算5日均线
-// function calculateMA5(prices) {
-//   const ma5 = [];
-//   for (let i = 0; i < prices.length; i++) {
-//     if (i < 4) {
-//       // 前4天数据不足，取已有数据的平均值
-//       const sum = prices.slice(0, i + 1).reduce((acc, val) => acc + val, 0);
-//       ma5.push(sum / (i + 1));
-//     } else {
-//       const sum = prices.slice(i - 4, i + 1).reduce((acc, val) => acc + val, 0);
-//       ma5.push(sum / 5);
-//     }
-//   }
-//   return ma5;
-// }
-
-// const ma5Values = calculateMA5(closePrices);
+export function judgeIfUpTrend(points: TPoints) {
+  // const { isUp, percentage } = trendByTotalChange(points);
+  // return {
+  //   isUp,
+  //   percentage,
+  // };
+  const isUp = judgeTrendByDifference(points) && judgeTrendByCurve(points);
+  return {
+    isUp,
+    percentage: 0,
+  };
+}

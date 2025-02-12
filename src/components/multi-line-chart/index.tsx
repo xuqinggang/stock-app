@@ -15,8 +15,8 @@ export const MultiLineChart = memo((props: IProps) => {
     return {
       type: "line",
       // padding: 16,
-      width: 500,
-      height: 300,
+      width: 530,
+      height: 270,
       data: {
         values: multiLine,
       },
@@ -27,9 +27,23 @@ export const MultiLineChart = memo((props: IProps) => {
       legends: [{ visible: true, position: "middle", orient: "bottom" }],
       line: {
         style: {
-          //         stroke: () => {
-          // return 'color';
-          //         },
+          // stroke: (datum) => {
+          //   const xValue = datum.x;
+          //   console.log("xxxxdatum", datum);
+          //   if (
+          //     xValue >= divideGroup?.[0]?.[0] &&
+          //     xValue <= divideGroup?.[0]?.[1]
+          //   ) {
+          //     return "red";
+          //   }
+          //   if (
+          //     xValue >= divideGroup?.[1]?.[0] &&
+          //     xValue <= divideGroup?.[1]?.[1]
+          //   ) {
+          //     return "green";
+          //   }
+          //   return "undefined";
+          // },
           curveType: "monotone",
           // fill: (datum) => {
           //   console.log("xxxxdatum", datum);
@@ -53,34 +67,52 @@ export const MultiLineChart = memo((props: IProps) => {
           // },
         },
       },
-      // point: {
-      //   style: {
-      //     fill: (datum) => {
-      //       console.log("xxxxdatum", datum);
-      //       if (datum.x)
-      //         // return {};
-      //       return {
-      //         gradient: "linear",
-      //         // x0: 0.5,
-      //         // y0: 0,
-      //         // x1: 0.5,
-      //         // y1: 1,
-      //         stops: [
-      //           {
-      //             offset: 0,
-      //             color: "red",
-      //           },
-      //           {
-      //             offset: 1,
-      //             color: "red",
-      //           },
-      //         ],
-      //       };
-      //     },
-      //   },
-      // },
+      point: {
+        style: {
+          fill: (datum) => {
+            const xValue = datum.x;
+            if (
+              xValue >= divideGroup?.[0]?.[0] &&
+              xValue <= divideGroup?.[0]?.[1]
+            ) {
+              return {
+                gradient: "linear",
+                stops: [
+                  {
+                    offset: 1,
+                    color: "red",
+                  },
+                ],
+              };
+            }
+            if (
+              xValue >= divideGroup?.[1]?.[0] &&
+              xValue <= divideGroup?.[1]?.[1]
+            ) {
+              return {
+                gradient: "linear",
+                stops: [
+                  {
+                    offset: 1,
+                    color: "green",
+                  },
+                ],
+              };
+            }
+            return {
+              gradient: "linear",
+              stops: [
+                {
+                  offset: 1,
+                  color: "#1664ff",
+                },
+              ],
+            };
+          },
+        },
+      },
     };
-  }, [multiLine]);
+  }, [multiLine, divideGroup]);
 
-  return <VChartComp className="!h-[300px]" spec={spec} />;
+  return <VChartComp className="!h-[270px]" spec={spec} />;
 });

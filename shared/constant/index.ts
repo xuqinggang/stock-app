@@ -16,6 +16,13 @@ export const DIM_NAME = {
   INCOME_RECENT_YEAR: "income_recent_year", // 营收
   PROFIT_RECENT_YEAR: "profit_recent_year", // 利润
   STOCK_ATTRIBUTION_CODE: "stock_attribution_code", // 板块
+
+  STOCK_HOT_TOPIC_CUSTOM: 'stock_hot_topic_custom', // 自定义热点题材过滤
+
+  MA5_LIMIT_DAY: 'ma5_limit_day', // 收盘价大于5日线均价的天数
+  CURVE_TREND_SIMILARITY: 'curve_trend_similarity', // 选中的股票 皮尔逊曲线相似度>=7
+  // 是否左后一
+  // 每天收盘价大于5日线均价
 };
 
 // 维度, 包含筛选, 多选/单选
@@ -102,6 +109,18 @@ export const DIMS_INCLUDE = [
     ],
     is_multi: true,
   },
+  {
+    name: DIM_NAME.STOCK_HOT_TOPIC_CUSTOM,
+    desc: "热点题材",
+    is_tags: true,
+  },
+  {
+    name: DIM_NAME.CURVE_TREND_SIMILARITY,
+    desc: "皮尔逊曲线相似度7",
+    is_multi: true,
+    // options=股票列表
+    is_stocks_options: true,
+  },
 ];
 // 维度, 阈值筛选, 数字比较
 export const DIMS_THRESHOLD = [
@@ -165,6 +184,11 @@ export const DIMS_THRESHOLD = [
     name: DIM_NAME.PARTNER_RECENT_YEAR,
     desc: "20240930最新股东人数", // 依赖api/python/constant.py
     unit: "人",
+  },
+  {
+    name: DIM_NAME.MA5_LIMIT_DAY, // 
+    desc: "收盘价大于5日均线的天数", // 依赖api/python/constant.py
+    unit: "天",
   },
   // {
   //   name: "income_recent_3_year",

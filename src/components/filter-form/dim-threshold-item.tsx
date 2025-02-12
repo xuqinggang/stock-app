@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import { useMemoizedFn } from "ahooks";
 import { InputNumber, Button, Select, Input } from "antd";
 import { THRESHOLD_OPERATOR_OPTIONS } from "./constant";
@@ -54,6 +54,13 @@ export const DimThresholdItem = memo((props: IProps) => {
       threshold: Number(threshold),
     });
   });
+
+  useEffect(() => {
+    if (!dimsOptions?.length || !value?.name) return;
+    const selectDimInfo = dimsOptions?.find((item) => item.value === value.name) as IDimInfoOption;
+    setDimInfo(selectDimInfo);
+  }, [value, dimsOptions]);
+
   return (
     <div className="flex items-center whitespace-nowrap gap-[8px]">
       <Select
@@ -63,18 +70,24 @@ export const DimThresholdItem = memo((props: IProps) => {
         disabled={value?.disabled}
         onChange={handleDimChange}
       />
-      {dimInfo?._options?.length ? (
+      {dimInfo?.is_multi || dimInfo?.is_tags ? (
         <>
           <Select
             className="!w-[170px]"
             placeholder="请选择"
             onChange={handleIncludeChange}
             disabled={value?.disabled}
-            mode={dimInfo?.is_multi ? "multiple" : undefined}
+            mode={dimInfo?.is_multi ? "multiple" : dimInfo?.is_tags ? "tags" : undefined}
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              || (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
+            }
             value={
+              dimInfo?.is_tags ? value.values : (
               dimInfo?.is_multi
                 ? value.values
                 : value.values?.[0]
+              )
             }
             options={dimInfo?._options}
           />

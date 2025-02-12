@@ -44,7 +44,7 @@ export const SelectStocksModule = memo((props: IProps) => {
     return dimsConditions?.map((item) => {
       return [
         dayjs(item?.range_date?.[0]).format("MM-DD"),
-        dayjs(item?.range_date?.[0]).format("MM-DD"),
+        dayjs(item?.range_date?.[1]).format("MM-DD"),
       ];
     }) as Array<[string, string]>;
   }, [dimsConditions]);
@@ -115,7 +115,6 @@ export const SelectStocksModule = memo((props: IProps) => {
     if (!selectTagStock) {
       return;
     }
-    console.log("xxxxxxe.code", e.code);
     const tIndex = formatStocks?.findIndex(
       (item) => item.code === selectTagStock.code
     );
@@ -179,12 +178,13 @@ export const SelectStocksModule = memo((props: IProps) => {
             筛查后的股票数量: {formatStocks?.length}/{stocks?.length}
           </div>
         </div>
-        <MultiLineChart multiLine={multiLine} divideGroup={divideGroup} />
+        {multiLine?.length && divideGroup?.length && <MultiLineChart multiLine={multiLine} divideGroup={divideGroup} />}
         <div>
           <KLineChart hist={kLineHist} />
           <div className="flex flex-col items-center">
             <div>
               股票名称:{selectTagStock?.name}-{selectTagStock?.code}
+              -相似度:{selectTagStock?.similarity?.toFixed(4)}
             </div>
             <div>
               市值:{selectTagStock?.market_recent}亿 营收:
@@ -269,6 +269,7 @@ export const SelectStocksModule = memo((props: IProps) => {
           })}
         </div>
       </div>
+          <div></div>
     </div>
   );
 });

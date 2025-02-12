@@ -16,6 +16,7 @@ export interface IDayK {
   成交量: number; // 手
   换手率: number; // %
   涨跌幅: number; // %
+  成交额: number; // 元
 }
 
 export interface IStockItemInfo {
@@ -31,6 +32,7 @@ export interface IUpStockItemInfo extends IStockItemInfo {
   points?: TPoints;
   rangePoints?: TPoints;
   isUp?: boolean;
+  similarity?: number; // 皮尔逊相似度
 }
 
 // 股票热点话题/主营业务
@@ -48,7 +50,9 @@ export interface IDimensions {
   dims_include_enums: Array<{
     desc: string;
     name: string;
-    is_multi?: boolean;
+    is_multi?: boolean; // mode="multiple"
+    is_tags?: boolean; // mode="tags"
+    is_stocks_options?: boolean; // options为股票列表
     options: Array<{ label: string; value: string }>;
   }>;
 }

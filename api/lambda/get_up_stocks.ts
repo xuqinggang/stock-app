@@ -21,16 +21,16 @@ interface IParams {}
 const SUMMARY_STOCK_JSON = summaryStockJson();
 
 export const get = async ({}: IParams) => {
-  const data = SUMMARY_STOCK_JSON?.map((stockItem) => {
-    const points = getPointsByDayK(stockItem.hist);
-    const isUp = judgeIfUpTrend(points);
-    return {
-      ...stockItem,
-      points,
-      isUp,
-    };
-  });
-  return formatResponse(data);
+  // const data = SUMMARY_STOCK_JSON?.map((stockItem) => {
+  //   const points = getPointsByDayK(stockItem.hist);
+  //   const isUp = judgeIfUpTrend(points);
+  //   return {
+  //     ...stockItem,
+  //     points,
+  //     isUp,
+  //   };
+  // });
+  // return formatResponse(data);
 };
 
 // export const get = async ({ datalen = 5 }: IParams) => {

@@ -33,6 +33,11 @@ export class StocksStore {
   }
 
   get dimsOptions(): Array<IDimInfoOption> {
+    const stocksOptions = this.stocks?.map(({ name, code }) => ({
+      label: name,
+      value: code,
+    }));
+    console.log("xxxxxstocksOptions", stocksOptions);
     return (
       this.dimensions?.dims_threshold_enums?.map(({ name, desc, unit }) => ({
         label: desc,
@@ -41,11 +46,12 @@ export class StocksStore {
       })) || []
     ).concat(
       (this.dimensions?.dims_include_enums?.map(
-        ({ name, desc, options, is_multi }) => ({
+        ({ name, desc, options, is_multi, is_tags, is_stocks_options }) => ({
           label: desc,
           value: name,
-          _options: options,
+          _options: options || (is_stocks_options && stocksOptions),
           is_multi,
+          is_tags,
         })
       ) as any) || []
     );

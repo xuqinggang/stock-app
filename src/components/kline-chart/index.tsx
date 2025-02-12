@@ -18,6 +18,7 @@ registerLocale("zh-CN", {
 });
 export const KLineChart = (props: IProps) => {
   const { hist } = props;
+  console.log('xxxxxhist', hist)
   useEffect(() => {
     const chart = init("chart", {
       styles: {
@@ -32,8 +33,20 @@ export const KLineChart = (props: IProps) => {
             upWickColor: "#F92855",
           },
         },
+        indicator: {
+          ohlc: {
+            upColor: "#F92855",
+            downColor: "#2DC08E",
+          },
+          bars: [{
+            upColor: "#F92855",
+            downColor: "#2DC08E",
+          }],
+        }
       },
     });
+    chart?.createIndicator('MA', false, { id: 'candle_pane' });
+    chart?.createIndicator('VOL');
 
     chart?.applyNewData(hist);
 
@@ -42,5 +55,5 @@ export const KLineChart = (props: IProps) => {
     };
   }, [hist]);
 
-  return <div id="chart" style={{ width: 500, height: 300 }} />;
+  return <div id="chart" style={{ width: 530, height: 400 }} />;
 };

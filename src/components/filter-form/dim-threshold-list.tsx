@@ -25,7 +25,6 @@ const DEFAULT_DIM_THRESHOLD = {
 export const DimThresholdList = memo((props: IProps) => {
   const { disabled, value, onChange, dimsOptions } = props;
   const [innerValue, setInnerValue] = useState(value ?? []);
-  console.log("xxxxvalue", value, dimsOptions);
 
   const handleItemChange = useMemoizedFn(
     (v: IDimThresholdItem, idx: number) => {
