@@ -32,6 +32,7 @@ export interface IUpStockItemInfo extends IStockItemInfo {
   points?: TPoints;
   rangePoints?: TPoints;
   isUp?: boolean;
+  percentage?: number; // 趋势程度百分比
   similarity?: number; // 皮尔逊相似度
 }
 

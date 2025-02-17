@@ -263,6 +263,16 @@ export function formatStocksByIndicatorDims(
                   });
                   break;
                 }
+                // 趋势程度
+                case DIM_NAME.TREND_PERCENTAGE: {
+                  filterCondition.push(() =>
+                    judgeMatchThreshold(percentage, {
+                      operator,
+                      threshold: threshold,
+                    })
+                  );
+                  break;
+                }
                 default: {
                 }
               }
@@ -273,6 +283,7 @@ export function formatStocksByIndicatorDims(
           return isFilter
             ? ({
                 ...stockItem,
+                percentage: Number(percentage.toFixed(5)),
                 isUp,
                 points: getPointsByDayK(stockItem.hist), // 全部时间内的点
                 rangePoints, // 时间区间内的点

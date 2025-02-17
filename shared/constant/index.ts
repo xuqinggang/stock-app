@@ -21,6 +21,7 @@ export const DIM_NAME = {
 
   MA5_LIMIT_DAY: 'ma5_limit_day', // 收盘价大于5日线均价的天数
   CURVE_TREND_SIMILARITY: 'curve_trend_similarity', // 选中的股票 皮尔逊曲线相似度>=7
+  TREND_PERCENTAGE: 'trend_percentage', // 趋势程度
   // 是否左后一
   // 每天收盘价大于5日线均价
 };
@@ -136,10 +137,6 @@ export const DIMS_THRESHOLD = [
   //   name: "up_trend_by_period",
   //   desc: "所选日期趋势上涨",
   // },
-  // {
-  //   name: "",
-  //   desc: "曲线上涨趋势度",
-  // },
   {
     name: DIM_NAME.TURNOVER_RATE_AVERAGE_DAY,
     desc: "日均换手率",
@@ -189,6 +186,10 @@ export const DIMS_THRESHOLD = [
     name: DIM_NAME.MA5_LIMIT_DAY, // 
     desc: "收盘价大于5日均线的天数", // 依赖api/python/constant.py
     unit: "天",
+  },
+  {
+    name: DIM_NAME.TREND_PERCENTAGE,
+    desc: "曲线趋势度",
   },
   // {
   //   name: "income_recent_3_year",

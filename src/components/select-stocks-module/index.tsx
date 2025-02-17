@@ -185,6 +185,7 @@ export const SelectStocksModule = memo((props: IProps) => {
             <div>
               股票名称:{selectTagStock?.name}-{selectTagStock?.code}
               -相似度:{selectTagStock?.similarity?.toFixed(4)}
+              -上升度:{selectTagStock?.percentage}
             </div>
             <div>
               市值:{selectTagStock?.market_recent}亿 营收:

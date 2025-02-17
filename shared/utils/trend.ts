@@ -62,14 +62,14 @@ function trendByTotalChange(points: TPoints) {
 }
 
 export function judgeIfUpTrend(points: TPoints) {
-  // const { isUp, percentage } = trendByTotalChange(points);
-  // return {
-  //   isUp,
-  //   percentage,
-  // };
-  const isUp = judgeTrendByDifference(points) && judgeTrendByCurve(points);
+  const { isUp, percentage } = trendByTotalChange(points);
   return {
     isUp,
-    percentage: 0,
+    percentage,
   };
+  // const isUp = judgeTrendByDifference(points) && judgeTrendByCurve(points);
+  // return {
+  //   isUp,
+  //   percentage: 0,
+  // };
 }
