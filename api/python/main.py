@@ -11,14 +11,14 @@ print("start...")
 
 # 2.依据stock-list.json 已有的股票列表, 更新股票历史行情数据 -> stock-list-hist.json
 # 参数: 时间范围
-# stock_list_hist.update_stock_list_hist(constant.HIST_DIFF_DAY)
+stock_list_hist.update_stock_list_hist(constant.HIST_DIFF_DAY)
 
 # 3.获取股票业绩报表(营收/利润) -> stock-list-income.json
 # 参数: 业绩报告时间点 date="20241231"; choice of {"XXXX0331", "XXXX0630", "XXXX0930", "XXXX1231"}; 从 20100331 开始
 # stock_list_income.update_stock_list_income(constant.INCOME_YEAR_PERIOD_DATE)
 
 # 4.根据实时行情, 获取市值/流通市值 -> stock-list-market.json
-# stock_list_market.update_stock_list_market()
+stock_list_market.update_stock_list_market()
 
 # 5.获取股东人数 -> stock-list-partner.json
 # 参数: 股东人数时间点
