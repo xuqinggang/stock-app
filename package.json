@@ -13,7 +13,8 @@
     "upgrade": "modern upgrade",
     "build_shell": "tsup ./api/shell/index.ts -d ./api/shell",
     "run_shell": "pnpm build_shell && node ./api/shell/index.js",
-    "run_python": "python3 ./api/python/main.py"
+    "run_python": "python3.13 ./api/python/main.py",
+    "run_test": "python3.13 ./api/python/test.py"
   },
   "engines": {
     "node": ">=16.18.1"

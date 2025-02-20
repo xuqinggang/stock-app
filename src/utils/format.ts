@@ -347,6 +347,20 @@ export function formatStocksByIndicatorDims(
                   });
                   break;
                 }
+                case DIM_NAME.UPPER_SHADOW_LINE: {
+                  // 满足上影线的数量
+                  const filterCount = stockHist?.filter(histItem => {
+                    const { 开盘, 收盘, 最高, 最低 } = histItem;
+                    return 收盘 > 开盘 && 最高 > 收盘 && (最高 - 收盘) > (收盘 - 开盘) / 3;
+                  })?.length;
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(filterCount, {
+                      operator,
+                      threshold: threshold,
+                    })
+                  });                  
+                  break;
+                }
                 default: {
                 }
               }

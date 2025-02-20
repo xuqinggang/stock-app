@@ -47,21 +47,24 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
 
     stock_list_info = []
     for item in stock_list_json:
-        # 获取股票历史行情信息
-        stock_zh_a_hist_df = ak.stock_zh_a_hist(
-            symbol=item["code"],
-            period="daily",
-            start_date=start_date,
-            end_date=end_date,
-            adjust="qfq",
-        )
-        stock_zh_a_hist_json_str = stock_zh_a_hist_df.to_json(
-            orient="records", force_ascii=False
-        )
-        stock_zh_a_hist_json = json.loads(stock_zh_a_hist_json_str)
-        # 股票添加历史行情数组
-        item["hist"] = stock_zh_a_hist_json
-        stock_list_info.append(item)
+        try:
+            # 获取股票历史行情信息
+            stock_zh_a_hist_df = ak.stock_zh_a_hist(
+                symbol=item["code"],
+                period="daily",
+                start_date=start_date,
+                end_date=end_date,
+                adjust="qfq",
+            )
+            stock_zh_a_hist_json_str = stock_zh_a_hist_df.to_json(
+                orient="records", force_ascii=False
+            )
+            stock_zh_a_hist_json = json.loads(stock_zh_a_hist_json_str)
+            # 股票添加历史行情数组
+            item["hist"] = stock_zh_a_hist_json
+            stock_list_info.append(item)
+        except Exception as e:
+            print(e)
 
     with open(file_path, "w") as f:
         json.dump(stock_list_info, f, ensure_ascii=False)

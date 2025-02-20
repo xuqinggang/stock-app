@@ -24,6 +24,7 @@ export const KLineChart = (props: IProps) => {
       styles: {
         candle: {
           bar: {
+            // 上涨为红色
             upColor: "#F92855",
             downColor: "#2DC08E",
             downBorderColor: "#2DC08E",

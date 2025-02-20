@@ -18,7 +18,7 @@ print("start...")
 # stock_list_income.update_stock_list_income(constant.INCOME_YEAR_PERIOD_DATE)
 
 # 4.根据实时行情, 获取市值/流通市值 -> stock-list-market.json
-stock_list_market.update_stock_list_market()
+# stock_list_market.update_stock_list_market()
 
 # 5.获取股东人数 -> stock-list-partner.json
 # 参数: 股东人数时间点
