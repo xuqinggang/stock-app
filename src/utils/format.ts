@@ -110,9 +110,9 @@ export function formatStocksByIndicatorDims(
           const rangePoints = getPointsByDayK(stockHist);
           // 时间区间内是否上行
           const { isUp, percentage } = judgeIfUpTrend(rangePoints);
-          if (stockItem?.code === "605088") {
-            console.log("xxxxxxtest", stockItem, stockHist, rangePoints, isUp);
-          }
+          // if (stockItem?.code === "605088") {
+          //   console.log("xxxxxxtest", stockItem, stockHist, rangePoints, isUp);
+          // }
           if (isUp) {
             // console.log('xxxxxxxxxjudgeIfUpTrend', isUp, stockItem.name, start_date, end_date, rangePoints, stockHist, stockItem);
           }
