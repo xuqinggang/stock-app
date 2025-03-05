@@ -115,6 +115,8 @@ export const SelectStocksModule = memo((props: IProps) => {
     if (!selectTagStock) {
       return;
     }
+    e.stopPropagation();
+    e.preventDefault();
     const tIndex = formatStocks?.findIndex(
       (item) => item.code === selectTagStock.code
     );
@@ -122,11 +124,11 @@ export const SelectStocksModule = memo((props: IProps) => {
     }
     if (e.code === "ArrowDown") {
       setSelectTagStock(formatStocks[tIndex + 1] || null);
-      return;
+      return false;
     }
     if (e.code === "ArrowUp") {
       setSelectTagStock(formatStocks[tIndex - 1] || null);
-      return;
+      return false;
     }
   });
 
