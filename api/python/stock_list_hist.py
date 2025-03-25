@@ -25,6 +25,7 @@ import akshare as ak
 import pandas as pd
 import json
 import constant
+import stock_utils
 from datetime import date, datetime, timedelta
 
 
@@ -38,6 +39,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
         stock_list_json = json.load(stock_list_json_file)
     print("更新股票数量:", len(stock_list_json))
 
+    stockLen = len(stock_list_json)
     # 最近 N 天
     DIFF_DAY = diff_day
     end_date = date.today().strftime("%Y%m%d")
@@ -46,7 +48,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
     print("更新历史行情时间范围:", start_date, end_date)
 
     stock_list_info = []
-    for item in stock_list_json:
+    for index, item in enumerate(stock_list_json):
         try:
             # 获取股票历史行情信息
             stock_zh_a_hist_df = ak.stock_zh_a_hist(
@@ -65,6 +67,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             stock_list_info.append(item)
         except Exception as e:
             print(e)
+        stock_utils.process_bar(index + 1, stockLen)
 
     with open(file_path, "w") as f:
         json.dump(stock_list_info, f, ensure_ascii=False)
