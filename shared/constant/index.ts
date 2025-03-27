@@ -23,6 +23,7 @@ export const DIM_NAME = {
   CURVE_TREND_SIMILARITY: 'curve_trend_similarity', // 选中的股票 皮尔逊曲线相似度>=7
   TREND_PERCENTAGE: 'trend_percentage', // 趋势程度
   UPPER_SHADOW_LINE: 'upper_shadow_line', // 上影线数量(收盘价大于开盘价 && 最高价大于收盘价 && (最高价-收盘价) >= (收盘价-开盘价)/3)
+  MULTIPLE_UPPER_LINES: 'multiple_upper_lines', // 连续小阳线
   // 是否左后一
   // 每天收盘价大于5日线均价
 };
@@ -195,6 +196,10 @@ export const DIMS_THRESHOLD = [
   {
     name: DIM_NAME.UPPER_SHADOW_LINE,
     desc: "上影线数量",
+  },
+  {
+    name: DIM_NAME.MULTIPLE_UPPER_LINES,
+    desc: "连续小阳线",
   },
   // {
   //   name: "income_recent_3_year",

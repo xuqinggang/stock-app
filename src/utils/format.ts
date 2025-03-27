@@ -10,6 +10,7 @@ import {
 import { calculateMA5 } from "@/utils/indicator";
 import { pearsonCorrelationCoefficient } from "@/utils/algorithm";
 import { IDimThresholdItem, IDimsCondition } from "@/types";
+import {ifSmallUpperLines} from '.';
 import _ from "lodash-es";
 
 const ONE_YI = 100000000;
@@ -347,8 +348,8 @@ export function formatStocksByIndicatorDims(
                   });
                   break;
                 }
+                // 满足上影线的数量
                 case DIM_NAME.UPPER_SHADOW_LINE: {
-                  // 满足上影线的数量
                   const filterCount = stockHist?.filter(histItem => {
                     const { 开盘, 收盘, 最高, 最低 } = histItem;
                     return 收盘 > 开盘 && 最高 > 收盘 && (最高 - 收盘) > (收盘 - 开盘) / 3;
@@ -359,6 +360,26 @@ export function formatStocksByIndicatorDims(
                       threshold: threshold,
                     })
                   });                  
+                  break;
+                }
+                // 连续小阳线数量
+                case DIM_NAME.MULTIPLE_UPPER_LINES: {
+                  let tempCount = 0;
+                  let maxCount = 0;
+                  stockHist?.forEach(histItem => {
+                    if(ifSmallUpperLines(histItem)) {
+                      tempCount++;
+                      maxCount = Math.max(maxCount, tempCount);
+                    } else {
+                      tempCount = 0;
+                    }
+                  });
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(maxCount, {
+                      operator,
+                      threshold: threshold,
+                    })
+                  });
                   break;
                 }
                 default: {
