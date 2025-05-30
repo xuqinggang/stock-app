@@ -18,3 +18,8 @@ export const ifSmallUpperLines = (histItem: IDayK) => {
   const { 开盘, 收盘, 最高, 最低 } = histItem;
   return 收盘 > 开盘 && Number(((收盘 - 开盘) / 开盘).toFixed(3)) <= 0.05;
 }
+// 大阳线 >= 6%
+export const ifBigUpperLines = (histItem: IDayK) => {
+  const { 开盘, 收盘, 最高, 最低 } = histItem;
+  return 收盘 > 开盘 && Number(((收盘 - 开盘) / 开盘).toFixed(3)) >= 0.06;
+}

@@ -37,7 +37,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
 
     with open(stock_list_file_path, "r", encoding="utf-8") as stock_list_json_file:
         stock_list_json = json.load(stock_list_json_file)
-    print("更新股票数量:", len(stock_list_json))
+    print("stock-list.json 更新前原股票数量:", len(stock_list_json))
 
     stockLen = len(stock_list_json)
     # 最近 N 天
@@ -66,7 +66,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             item["hist"] = stock_zh_a_hist_json
             stock_list_info.append(item)
         except Exception as e:
-            print(e)
+            print(item["name"], e)
         stock_utils.process_bar(index + 1, stockLen)
 
     with open(file_path, "w") as f:

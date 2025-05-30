@@ -10,7 +10,7 @@ import {
 import { calculateMA5 } from "@/utils/indicator";
 import { pearsonCorrelationCoefficient } from "@/utils/algorithm";
 import { IDimThresholdItem, IDimsCondition } from "@/types";
-import {ifSmallUpperLines} from '.';
+import { ifSmallUpperLines, ifBigUpperLines } from '.';
 import _ from "lodash-es";
 
 const ONE_YI = 100000000;
@@ -79,6 +79,8 @@ export function formatStocksByIndicatorDims(
   }
 ): IUpStockItemInfo[] {
   const { stockHotTopicMap } = options || {};
+
+  console.log('xxxxxx000', data);
   // 获取多个条件组筛查出的股票, 最终需要对其取交集
   const stocksRtArr = dimsConditions
     ?.filter((item) => !item.disabled)
@@ -111,6 +113,9 @@ export function formatStocksByIndicatorDims(
           const rangePoints = getPointsByDayK(stockHist);
           // 时间区间内是否上行
           const { isUp, percentage } = judgeIfUpTrend(rangePoints);
+          if (stockItem.name === '德邦股份'){
+            console.log('xxxxxx000', stockItem, isUp, percentage);
+          }
           // if (stockItem?.code === "605088") {
           //   console.log("xxxxxxtest", stockItem, stockHist, rangePoints, isUp);
           // }
@@ -376,6 +381,32 @@ export function formatStocksByIndicatorDims(
                   });
                   filterCondition.push(() => {
                     return judgeMatchThreshold(maxCount, {
+                      operator,
+                      threshold: threshold,
+                    })
+                  });
+                  break;
+                }
+                // 小阳线数量
+                case DIM_NAME.SMALL_UPPER_LINES: {
+                  const filterCount = stockHist?.filter(histItem => {
+                    return ifSmallUpperLines(histItem)
+                  })?.length;
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(filterCount, {
+                      operator,
+                      threshold: threshold,
+                    })
+                  });
+                  break;
+                }
+                // 大阳线数量
+                case DIM_NAME.BIG_UPPER_LINES: {
+                  const filterCount = stockHist?.filter(histItem => {
+                    return ifBigUpperLines(histItem)
+                  })?.length;
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(filterCount, {
                       operator,
                       threshold: threshold,
                     })

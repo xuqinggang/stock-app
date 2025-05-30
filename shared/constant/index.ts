@@ -24,6 +24,8 @@ export const DIM_NAME = {
   TREND_PERCENTAGE: 'trend_percentage', // 趋势程度
   UPPER_SHADOW_LINE: 'upper_shadow_line', // 上影线数量(收盘价大于开盘价 && 最高价大于收盘价 && (最高价-收盘价) >= (收盘价-开盘价)/3)
   MULTIPLE_UPPER_LINES: 'multiple_upper_lines', // 连续小阳线
+  SMALL_UPPER_LINES: 'small_upper_lines', // 小阳线数量
+  BIG_UPPER_LINES: 'big_upper_lines', // 大阳线数量
   // 是否左后一
   // 每天收盘价大于5日线均价
 };
@@ -199,7 +201,15 @@ export const DIMS_THRESHOLD = [
   },
   {
     name: DIM_NAME.MULTIPLE_UPPER_LINES,
-    desc: "连续小阳线",
+    desc: "连续小阳线数量",
+  },
+  {
+    name: DIM_NAME.SMALL_UPPER_LINES,
+    desc: "小阳线数量",
+  },
+  {
+    name: DIM_NAME.BIG_UPPER_LINES,
+    desc: "大阳线数量",
   },
   // {
   //   name: "income_recent_3_year",
