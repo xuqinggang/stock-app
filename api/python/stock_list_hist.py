@@ -45,11 +45,13 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
     end_date = date.today().strftime("%Y%m%d")
     start_date = (datetime.now() + timedelta(days=DIFF_DAY)).strftime("%Y%m%d")
 
+    time.sleep(2)
     print("更新历史行情时间范围:", start_date, end_date)
 
     stock_list_info = []
     for index, item in enumerate(stock_list_json):
         try:
+            time.sleep(1)
             # 获取股票历史行情信息
             stock_zh_a_hist_df = ak.stock_zh_a_hist(
                 symbol=item["code"],
