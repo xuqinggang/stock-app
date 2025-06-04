@@ -15,6 +15,7 @@ registerLocale("zh-CN", {
   volume: "成交量：",
   turnover: "成交额：",
   change: "涨幅：",
+  radio: "换手率：",
 });
 export const KLineChart = (props: IProps) => {
   const { hist } = props;

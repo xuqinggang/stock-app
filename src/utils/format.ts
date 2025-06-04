@@ -17,6 +17,7 @@ const ONE_YI = 100000000;
 
 // 格式化选中的股票为K线图
 export function formatStockHistToKLine(stockItem: IUpStockItemInfo) {
+  console.log('xxxxstockItem', stockItem);
   return stockItem?.hist?.map((item) => {
     return {
       high: item.最高,
@@ -27,6 +28,7 @@ export function formatStockHistToKLine(stockItem: IUpStockItemInfo) {
       volume: item.成交量,
       turnover: item.成交额,
       change: item.涨跌幅,
+      radio: item.换手率,
     };
   });
 }
