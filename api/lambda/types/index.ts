@@ -27,6 +27,7 @@ export interface IStockItemInfo {
   income_recent_year: number; // 最近年份 营收 亿元
   profit_recent_year: number; // 最近年份 利润 亿元
   partner_recent_year: number; // 最近年份 股东人数
+  isChecked?: boolean; // 是否添加到备选
 }
 export interface IUpStockItemInfo extends IStockItemInfo {
   points?: TPoints;

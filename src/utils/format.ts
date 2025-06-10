@@ -34,9 +34,9 @@ export function formatStockHistToKLine(stockItem: IUpStockItemInfo) {
 }
 
 // 格式化选中的股票数据,为趋势线图
-export function formatStocksToMultiLine(data: IUpStockItemInfo[]) {
+export function formatStocksToMultiLine(stocks: IUpStockItemInfo[]) {
   const values: IProps["multiLine"] = [];
-  data?.forEach?.((item) => {
+  stocks?.forEach?.((item) => {
     return item?.points?.forEach((pointItem, index) => {
       values.push({
         x: dayjs(item?.hist[index]["日期"]).format("MM-DD"),
@@ -73,8 +73,10 @@ export function judgeMatchThreshold(
     }
   }
 }
+
+// 通过左侧表单指标过滤出 股票列表
 export function formatStocksByIndicatorDims(
-  data: IStockItemInfo[],
+  stocks: IStockItemInfo[],
   dimsConditions: Array<IDimsCondition>,
   options?: {
     stockHotTopicMap: { [code: string]: IStockHotTopic };
@@ -82,7 +84,7 @@ export function formatStocksByIndicatorDims(
 ): IUpStockItemInfo[] {
   const { stockHotTopicMap } = options || {};
 
-  console.log('xxxxxx000', data);
+  console.log('xxxxxx000', stocks);
   // 获取多个条件组筛查出的股票, 最终需要对其取交集
   const stocksRtArr = dimsConditions
     ?.filter((item) => !item.disabled)
@@ -101,7 +103,7 @@ export function formatStocksByIndicatorDims(
     const { range_date, dims_threshold, is_up_trend } = dimsConditionItem;
     const [start_date, end_date] = range_date || [];
     return (
-      data
+      stocks
         ?.map((stockItem) => {
           let stockHist = [...stockItem.hist];
           // 获取选中时间范围内的股票行情, 来判断区间内趋势是否上行
@@ -319,7 +321,7 @@ export function formatStocksByIndicatorDims(
                 // 皮尔逊曲线相似度>=0.7
                 case DIM_NAME.CURVE_TREND_SIMILARITY: {
                   filterCondition.push(() => {
-                    const selectStock = data?.find(
+                    const selectStock = stocks?.find(
                       (item) => item.code === values[0]
                     );
                     const selectStockHist = selectStock?.hist?.filter(

@@ -16,26 +16,29 @@ import { observer } from "mobx-react-lite";
 import { useStocks } from "@/provider/stocks-provider";
 import { formatStocksByIndicatorDims } from "@/utils/format";
 import { SelectStocksModule } from "@/components/select-stocks-module";
+import { useImmer } from "use-immer";
 
 const Index = observer(() => {
   const { stocksStore } = useStocks();
-  const { stocks, stocksHotTopic, stockHotTopicMap, setDimsConditions, dimsConditions } = stocksStore;
+  const { stocks, stockHotTopicMap, setDimsConditions, dimsConditions } =
+    stocksStore;
   console.log("xxxxstocks", stocks);
 
-  const [formatStocks, setFormatStocks] = useState<IUpStockItemInfo[]>([]);
+  const [formatStocks, setFormatStocks] = useImmer<IUpStockItemInfo[]>([]);
 
   const handleQuery = useMemoizedFn((dimsConditions: IDimsCondition[]) => {
     console.log("xxxxxhandleQuery-dimsCondition", dimsConditions);
     setDimsConditions(dimsConditions);
     if (dimsConditions) {
-      const formatStocks = formatStocksByIndicatorDims(stocks, dimsConditions, {stockHotTopicMap});
+      const formatStocks = formatStocksByIndicatorDims(stocks, dimsConditions, {
+        stockHotTopicMap,
+      });
       setFormatStocks(formatStocks);
       console.log("xxxxxhandleQuery-formatStocks", formatStocks);
     }
   });
 
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
   // console.log("xxxxxmul", multiLine, data);
   return (
     <StocksProvider>
@@ -44,7 +47,13 @@ const Index = observer(() => {
           <FilterForm onQuery={handleQuery} />
         </div>
         <div>
-          <SelectStocksModule stocks={stocks} stockHotTopicMap={stockHotTopicMap} formatStocks={formatStocks} dimsConditions={dimsConditions}/>
+          <SelectStocksModule
+            stocks={stocks}
+            stockHotTopicMap={stockHotTopicMap}
+            formatStocks={[...formatStocks]}
+            dimsConditions={dimsConditions}
+            setFormatStocks={setFormatStocks}
+          />
         </div>
         {/* <Select
           mode="multiple"

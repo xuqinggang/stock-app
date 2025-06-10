@@ -11,27 +11,32 @@ import {
 } from "@/utils/format";
 import { getStockAttributionCode } from "@/utils";
 import { IDimsCondition } from "@/types";
+import { SortedStocksList } from "./sorted-stocks-list";
+import { Updater } from "use-immer";
 
 interface IProps {
-  stocksHotTopic?: IStockHotTopic[];
-  stockHotTopicMap: { [code: string]: IStockHotTopic };
-  stocks: IUpStockItemInfo[];
+  stocksHotTopic?: IStockHotTopic[]; // 股票热点话题列表
+  stockHotTopicMap: { [code: string]: IStockHotTopic }; // 股票热点话题 map
+  stocks: IUpStockItemInfo[]; // 所有股票
   formatStocks: IUpStockItemInfo[];
   dimsConditions: IDimsCondition[];
+  setFormatStocks: Updater<IUpStockItemInfo[]>;
 }
 export const SelectStocksModule = memo((props: IProps) => {
-  const { stocks, formatStocks, stockHotTopicMap, dimsConditions } = props;
+  const {
+    stocks,
+    formatStocks,
+    stockHotTopicMap,
+    dimsConditions,
+    setFormatStocks,
+  } = props;
+  console.log("xxxxSelectStocksModule", formatStocks);
+
+  // 可查看多个股票的自定义趋势图
   const [selectCodeStocks, setSelectCodeStocks] = useState<string[]>([]);
-  const [selectTagStock, setSelectTagStock] = useState<IUpStockItemInfo | null>(
-    null
-  );
-  // 市值/营收/利润排序(默认升序)
-  const [sortMap, setSortMap] = useState({
-    // 0: 升序 1: 降序 2:无排序
-    market_recent: 0,
-    income_recent_year: 2,
-    profit_recent_year: 2,
-  });
+  // 选中的单个股票
+  const [selectTagStock, setSelectTagStock] =
+    useState<IUpStockItemInfo | null>();
 
   // 选中的股票, 热点话题/主营业务
   const selectStockHotTopic = useMemo(() => {
@@ -49,6 +54,7 @@ export const SelectStocksModule = memo((props: IProps) => {
     }) as Array<[string, string]>;
   }, [dimsConditions]);
 
+  // 过滤后的股票列表 select options
   const options = useMemo(() => {
     return formatStocks?.map((item) => ({
       label: item.name,
@@ -56,7 +62,7 @@ export const SelectStocksModule = memo((props: IProps) => {
     }));
   }, [formatStocks]);
 
-  // 趋势线
+  // 选中股票 - 趋势线
   const multiLine = useMemo(() => {
     console.log(
       "xxxxxselectCodeStocks",
@@ -75,22 +81,20 @@ export const SelectStocksModule = memo((props: IProps) => {
     return [];
   }, [selectCodeStocks, selectTagStock, formatStocks]);
 
-  // K线图
+  // 选中股票 - K线图
   const kLineHist = useMemo(() => {
     return formatStockHistToKLine(selectTagStock!);
   }, [selectTagStock]);
 
-  const sortFormatStocks = useMemo(() => {
-    const [sortK, sortV] =
-      Object.entries(sortMap).find(([sortK, sortV]) => sortV <= 1) || [];
-    if (sortK) {
-      formatStocks?.sort((a: any, b: any) =>
-        sortV === 0 ? a[sortK] - b[sortK] : b[sortK] - a[sortK]
-      );
-    } else {
-      return formatStocks;
-    }
-  }, [formatStocks, sortMap]);
+  // 股票check选中
+  const handleCheckStockItem = useMemoizedFn((stockItem: IUpStockItemInfo) => {
+    const tIndex = formatStocks?.findIndex(
+      (item) => item.code === stockItem.code
+    );
+    setFormatStocks((draft) => {
+      draft[tIndex].isChecked = !draft[tIndex].isChecked;
+    });
+  });
 
   const handleSelectStockChange = useMemoizedFn((value: string[]) => {
     setSelectCodeStocks(value);
@@ -101,8 +105,9 @@ export const SelectStocksModule = memo((props: IProps) => {
     }
   });
 
-  const handleTagClick = useMemoizedFn(
-    (stockItem: IUpStockItemInfo, check: boolean) => {
+  // 选中某个股票
+  const handleSelectClick = useMemoizedFn(
+    (stockItem: IUpStockItemInfo, check?: boolean) => {
       console.log("xxxxxhandleTagClick", stockItem);
       setSelectTagStock(stockItem);
       if (!check) {
@@ -123,34 +128,16 @@ export const SelectStocksModule = memo((props: IProps) => {
     if (e.code === "Escape") {
     }
     if (e.code === "ArrowDown") {
+      // 选择下一个
       setSelectTagStock(formatStocks[tIndex + 1] || null);
       return false;
     }
     if (e.code === "ArrowUp") {
+      // 选择上一个
       setSelectTagStock(formatStocks[tIndex - 1] || null);
       return false;
     }
   });
-
-  // 排序
-  const handleSort = (
-    key: "market_recent" | "income_recent_year" | "profit_recent_year"
-  ) => {
-    const sortTag = sortMap[key];
-    setSortMap({
-      ...sortMap,
-      market_recent: 2,
-      income_recent_year: 2,
-      profit_recent_year: 2,
-      [key]: (Number(sortTag) + 1) % 3,
-    });
-  };
-
-  // useEffect(() => {
-  //   if (selectTagStock) {
-  //   selectCodeStocks?.find(item => item.)
-  //   }
-  // }, [selectTagStock]);
 
   useEffect(() => {
     //监听键盘事件
@@ -177,7 +164,7 @@ export const SelectStocksModule = memo((props: IProps) => {
       {/* 中间趋势图+K线图 */}
       <div className="flex flex-col pl-[30px]">
         <div className="flex items-center">
-          {/* 选择筛查股票数量 */}
+          {/* 选择筛查股票可查看多个股票的趋势图 */}
           <Select
             mode="multiple"
             allowClear
@@ -221,70 +208,13 @@ export const SelectStocksModule = memo((props: IProps) => {
           </div>
         </div>
       </div>
-      {/* 右侧筛选出的股票列表 */}
-      <div className="flex flex-col">
-        <div className="flex gap-[5px]">
-          <div>
-            市值:{" "}
-            <Button size="small" onClick={() => handleSort("market_recent")}>
-              {sortMap.market_recent === 0
-                ? "升序"
-                : sortMap.market_recent === 1
-                ? "降序"
-                : "无"}
-            </Button>
-          </div>
-          <div>
-            营收:{" "}
-            <Button
-              size="small"
-              onClick={() => handleSort("income_recent_year")}
-            >
-              {sortMap.income_recent_year === 0
-                ? "升序"
-                : sortMap.income_recent_year === 1
-                ? "降序"
-                : "无"}
-            </Button>
-          </div>
-          <div>
-            利润:{" "}
-            <Button
-              size="small"
-              onClick={() => handleSort("profit_recent_year")}
-            >
-              {sortMap.profit_recent_year === 0
-                ? "升序"
-                : sortMap.profit_recent_year === 1
-                ? "降序"
-                : "无"}
-            </Button>
-          </div>
-        </div>
-        <div
-          className="flex flex-col h-[calc(100vh-60px)] px-[3px] gap-y-[5px] overflow-y-auto"
-          style={{ border: "1px solid black" }}
-        >
-          {formatStocks?.map((stockItem) => {
-            return (
-              <div className="flex items-center gap-[3px]">
-                <Tag className="w-[78px]">
-                  {getStockAttributionCode(stockItem.code)}
-                </Tag>
-                <Tag.CheckableTag
-                  className="cursor-pointer"
-                  key={stockItem?.code}
-                  checked={stockItem?.code === selectTagStock?.code}
-                  onChange={(check) => handleTagClick(stockItem, check)}
-                >
-                  {stockItem.name} - 市值:{stockItem.market_recent?.toFixed(2)}{" "}
-                  - 营收:{stockItem.income_recent_year?.toFixed(2)}
-                </Tag.CheckableTag>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {/* 右侧筛选出的股票列表(可排序, 可选中某个) */}
+      <SortedStocksList
+        selectedStock={selectTagStock}
+        onStockSelect={handleSelectClick}
+        formatStocks={formatStocks}
+        onStockCheck={handleCheckStockItem}
+      />
       <div></div>
     </div>
   );
