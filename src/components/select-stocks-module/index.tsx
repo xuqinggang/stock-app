@@ -155,6 +155,17 @@ export const SelectStocksModule = memo((props: IProps) => {
   useEffect(() => {
     //监听键盘事件
     document.addEventListener("keyup", PopupKeyUp, false);
+    document.addEventListener("keydown", (event) => {
+      if (
+        event.key === "ArrowUp" ||
+        event.key === "ArrowDown" ||
+        event.key === "PageUp" ||
+        event.key === "PageDown" ||
+        event.key === "Space"
+      ) {
+        event.preventDefault();
+      }
+    });
     return () => {
       //销毁键盘事件
       document.removeEventListener("keyup", PopupKeyUp, false);
@@ -180,7 +191,9 @@ export const SelectStocksModule = memo((props: IProps) => {
             筛查后的股票数量: {formatStocks?.length}/{stocks?.length}
           </div>
         </div>
-        {multiLine?.length && divideGroup?.length && <MultiLineChart multiLine={multiLine} divideGroup={divideGroup} />}
+        {multiLine?.length && divideGroup?.length && (
+          <MultiLineChart multiLine={multiLine} divideGroup={divideGroup} />
+        )}
         <div>
           <KLineChart hist={kLineHist} />
           <div className="flex flex-col items-center">
@@ -272,7 +285,7 @@ export const SelectStocksModule = memo((props: IProps) => {
           })}
         </div>
       </div>
-          <div></div>
+      <div></div>
     </div>
   );
 });
