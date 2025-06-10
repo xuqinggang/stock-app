@@ -128,7 +128,7 @@ export const SortedStocksList = (props: IProps) => {
                 {stockItem.name} - 市值:{stockItem.market_recent?.toFixed(2)} -
                 营收:{stockItem.income_recent_year?.toFixed(2)}
               </Tag.CheckableTag>
-              {stockItem?.isChecked ? <CheckSquareOutlined />: <PlusSquareOutlined /> }
+              {stockItem?.isChecked ? <CheckSquareOutlined color="green" />: <PlusSquareOutlined /> }
             </div>
           );
         })}
