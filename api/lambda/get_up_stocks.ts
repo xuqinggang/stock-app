@@ -1,24 +1,24 @@
 /**
  * 获取趋势向上的股票信息(历史日行情k线数据
  */
-import stockList from "@python/datas/stock-list.json";
-import stockListInfo from "@python/datas/stock-list-hist.json";
-import {
-  judgeIfUpTrend,
-  formatResponse,
-  getStockSymbol,
-  getPointsByDayK,
-} from "@api/utils";
-import axios from "axios";
-import fs from "fs";
-import { IStockItemInfo } from "@api/types";
-import { summaryStockJson } from "@api/utils";
+// import stockList from "@python/datas/stock-list.json";
+// import stockListInfo from "@python/datas/stock-list-hist.json";
+// import {
+//   judgeIfUpTrend,
+//   formatResponse,
+//   getStockSymbol,
+//   getPointsByDayK,
+// } from "@api/utils";
+// import axios from "axios";
+// import fs from "fs";
+// import { IStockItemInfo } from "@api/types";
+// import { summaryStockJson } from "@api/utils";
 
-const STOCK_LIST_INFO = stockListInfo as Array<IStockItemInfo>;
+// const STOCK_LIST_INFO = stockListInfo as Array<IStockItemInfo>;
 
-interface IParams {}
+// interface IParams {}
 
-const SUMMARY_STOCK_JSON = summaryStockJson();
+// const SUMMARY_STOCK_JSON = summaryStockJson();
 
 export const get = async ({}: IParams) => {
   // const data = SUMMARY_STOCK_JSON?.map((stockItem) => {

@@ -32,11 +32,17 @@ from datetime import date, datetime, timedelta
 def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
     print("stock-list-hist.json 开始更新...", "N天前:", diff_day)
     cur_path = os.path.abspath(os.path.dirname(__file__))
+
     stock_list_file_path = os.path.join(cur_path, "datas/stock-list.json")
-    file_path = os.path.join(cur_path, "datas/stock-list-hist.json")
+
+    stock_list_hist_file_path = os.path.join(cur_path, "datas/stock-list-hist.json")
 
     with open(stock_list_file_path, "r", encoding="utf-8") as stock_list_json_file:
         stock_list_json = json.load(stock_list_json_file)
+
+    # 当前
+    with open(stock_list_hist_file_path, "r", encoding="utf-8") as stock_list_hist_file:
+        stock_list_hist_json = json.load(stock_list_hist_file)
     print("stock-list.json 更新前原股票数量:", len(stock_list_json))
 
     stockLen = len(stock_list_json)
@@ -71,7 +77,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             print(item["name"], e)
         stock_utils.process_bar(index + 1, stockLen)
 
-    with open(file_path, "w") as f:
+    with open(stock_list_hist_file_path, "w") as f:
         json.dump(stock_list_info, f, ensure_ascii=False)
         print("stock-list-hist.json 更新股票数量: ", len(stock_list_info))
         print("stock-list-hist.json 完成!!!")

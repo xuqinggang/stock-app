@@ -1,5 +1,8 @@
 // 将python 生成的json文件信息, 进行股票汇总
 
+import fs from "fs";
+import path from "path";
+import dayjs from "dayjs";
 import stockListHist from "@python/datas/stock-list-hist.json";
 import stockListMarket from "@python/datas/stock-list-market.json";
 import stockListIncome from "@python/datas/stock-list-income.json";
@@ -8,6 +11,7 @@ import { IStockItemInfo } from "@api/types";
 import { convertToBillions } from "@api/utils";
 
 export function summaryStockJson() {
+  console.log("summaryStockJson");
   return (stockListHist as IStockItemInfo[]).map((stock) => {
     const targetMarket = (stockListMarket as any).find(
       (item: any) => item["代码"] === stock.code
