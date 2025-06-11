@@ -12,7 +12,7 @@ interface IProps {
   formatStocks: IUpStockItemInfo[];
   onStockSelect?: (stockItem: IUpStockItemInfo, isSelected?: boolean) => void;
   onStockCheck?: (stockItem: IUpStockItemInfo) => void;
-   
+
   selectedStock?: IUpStockItemInfo | null;
 }
 export const SortedStocksList = (props: IProps) => {
@@ -66,14 +66,14 @@ export const SortedStocksList = (props: IProps) => {
     }
   });
 
-  //   useEffect(() => {
-  //   //监听键盘事件
-  //   document.addEventListener("keyup", PopupKeyUp, false);
-  //   return () => {
-  //     //销毁键盘事件
-  //     document.removeEventListener("keyup", PopupKeyUp, false);
-  //   };
-  // }, []);
+  useEffect(() => {
+    //监听键盘事件
+    document.addEventListener("keyup", PopupKeyUp, false);
+    return () => {
+      //销毁键盘事件
+      document.removeEventListener("keyup", PopupKeyUp, false);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -115,20 +115,34 @@ export const SortedStocksList = (props: IProps) => {
       >
         {sortedFormatStocks?.map((stockItem) => {
           return (
-            <div className="flex items-center gap-[3px]" key={stockItem.code}>
-              <Tag className="w-[78px]">
-                {getStockAttributionCode(stockItem.code)}
-              </Tag>
-              <Tag.CheckableTag
-                className="cursor-pointer"
-                key={stockItem?.code}
-                checked={stockItem?.code === selectedStock?.code}
-                onChange={(check) => onStockSelect?.(stockItem, check)}
-              >
-                {stockItem.name} - 市值:{stockItem.market_recent?.toFixed(2)} -
-                营收:{stockItem.income_recent_year?.toFixed(2)}
-              </Tag.CheckableTag>
-              {stockItem?.isChecked ? <CheckSquareOutlined color="green" />: <PlusSquareOutlined /> }
+            <div
+              className="flex items-center justify-between"
+              key={stockItem.code}
+            >
+              <div className="flex items-center gap-[3px]">
+                <Tag className="w-[78px]">
+                  {getStockAttributionCode(stockItem.code)}
+                </Tag>
+                <Tag.CheckableTag
+                  className="cursor-pointer"
+                  key={stockItem?.code}
+                  checked={stockItem?.code === selectedStock?.code}
+                  onChange={(check) => onStockSelect?.(stockItem, check)}
+                >
+                  {stockItem.name} - 市值:{stockItem.market_recent?.toFixed(2)}{" "}
+                  - 营收:{stockItem.income_recent_year?.toFixed(2)}
+                </Tag.CheckableTag>
+              </div>
+              {stockItem?.isChecked ? (
+                <CheckSquareOutlined
+                  color="green"
+                  onClick={() => onStockCheck?.(selectedStock!)}
+                />
+              ) : (
+                <PlusSquareOutlined
+                  onClick={() => onStockCheck?.(selectedStock!)}
+                />
+              )}
             </div>
           );
         })}

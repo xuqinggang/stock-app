@@ -13,6 +13,7 @@ import { getStockAttributionCode } from "@/utils";
 import { IDimsCondition } from "@/types";
 import { SortedStocksList } from "./sorted-stocks-list";
 import { Updater } from "use-immer";
+import { CheckedStocksList } from "./checked-stocks-list";
 
 interface IProps {
   stocksHotTopic?: IStockHotTopic[]; // 股票热点话题列表
@@ -215,7 +216,8 @@ export const SelectStocksModule = memo((props: IProps) => {
         formatStocks={formatStocks}
         onStockCheck={handleCheckStockItem}
       />
-      <div></div>
+      {/* 最右侧checked=true的股票列表 */}
+      <CheckedStocksList formatStocks={formatStocks} />
     </div>
   );
 });
