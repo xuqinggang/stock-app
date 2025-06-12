@@ -8,3 +8,10 @@ def process_bar(num, total):
     r = "\r[{}{}]{}%".format("*" * ratenum, " " * (100 - ratenum), ratenum)
     sys.stdout.write(r)
     sys.stdout.flush()
+
+
+def dict_find_item(items, target_item, target_key):
+    for item in items:
+        if item[target_key] == target_item[target_key]:
+            return item
+    return None
