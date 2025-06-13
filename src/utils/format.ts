@@ -10,7 +10,7 @@ import {
 import { calculateMA5 } from "@/utils/indicator";
 import { pearsonCorrelationCoefficient } from "@/utils/algorithm";
 import { IDimThresholdItem, IDimsCondition } from "@/types";
-import { ifSmallUpperLines, ifBigUpperLines } from '.';
+import { ifSmallUpperLines, ifBigUpperLines, ifSmallDownLines, isUpperShadowLines, isDownShadowLines } from '.';
 import _ from "lodash-es";
 
 const ONE_YI = 100000000;
@@ -357,12 +357,20 @@ export function formatStocksByIndicatorDims(
                   });
                   break;
                 }
-                // 满足上影线的数量
+                // 满足阳上影线的数量
                 case DIM_NAME.UPPER_SHADOW_LINE: {
-                  const filterCount = stockHist?.filter(histItem => {
-                    const { 开盘, 收盘, 最高, 最低 } = histItem;
-                    return 收盘 > 开盘 && 最高 > 收盘 && (最高 - 收盘) > (收盘 - 开盘) / 3;
-                  })?.length;
+                  const filterCount = stockHist?.filter(isUpperShadowLines)?.length;
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(filterCount, {
+                      operator,
+                      threshold: threshold,
+                    })
+                  });                  
+                  break;
+                }
+                // 满足阴上影线的数量
+                case DIM_NAME.UPPER_SHADOW_LINE: {
+                  const filterCount = stockHist?.filter(isDownShadowLines)?.length;
                   filterCondition.push(() => {
                     return judgeMatchThreshold(filterCount, {
                       operator,
@@ -416,6 +424,22 @@ export function formatStocksByIndicatorDims(
                     })
                   });
                   break;
+                }
+                // 小阴线数量
+                case DIM_NAME.SMALL_DOWN_LINES: {
+                  const filterCount = stockHist?.filter(histItem => {
+                    return ifSmallDownLines(histItem)
+                  })?.length;
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(filterCount, {
+                      operator,
+                      threshold: threshold,
+                    })
+                  });
+                  break;
+                }
+                // 上影小阴线
+                case DIM_NAME.SMALL_DOWN_LINES: {
                 }
                 default: {
                 }

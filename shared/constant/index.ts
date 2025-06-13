@@ -22,10 +22,15 @@ export const DIM_NAME = {
   MA5_LIMIT_DAY: 'ma5_limit_day', // 收盘价大于5日线均价的天数
   CURVE_TREND_SIMILARITY: 'curve_trend_similarity', // 选中的股票 皮尔逊曲线相似度>=7
   TREND_PERCENTAGE: 'trend_percentage', // 趋势程度
-  UPPER_SHADOW_LINE: 'upper_shadow_line', // 上影线数量(收盘价大于开盘价 && 最高价大于收盘价 && (最高价-收盘价) >= (收盘价-开盘价)/3)
+  UPPER_SHADOW_LINE: 'upper_shadow_line', // 阳上影线数量
+  DOWN_SHADOW_LINE: 'down_shadow_line', // 阴上影线数量
   MULTIPLE_UPPER_LINES: 'multiple_upper_lines', // 连续小阳线
   SMALL_UPPER_LINES: 'small_upper_lines', // 小阳线数量
   BIG_UPPER_LINES: 'big_upper_lines', // 大阳线数量
+  SMALL_DOWN_LINES: 'small_down_lines', // 小阴线数量
+  UPPER_SHADOW_SMALL_DOWN_LINES: 'upper_shadow_small_down_lines', // 上影小阴线数量
+  // BIG_DOWN_LINES: 'big_down_lines', // 大阴线数量
+  // SMALL_DOWN_LINES: 'small_down_lines', // 上影小阴线数量
   // 是否左后一
   // 每天收盘价大于5日线均价
 };
@@ -197,7 +202,11 @@ export const DIMS_THRESHOLD = [
   },
   {
     name: DIM_NAME.UPPER_SHADOW_LINE,
-    desc: "上影线数量",
+    desc: "阳上影线数量",
+  },
+  {
+    name: DIM_NAME.DOWN_SHADOW_LINE,
+    desc: "阴上影线数量",
   },
   {
     name: DIM_NAME.MULTIPLE_UPPER_LINES,
@@ -205,11 +214,15 @@ export const DIMS_THRESHOLD = [
   },
   {
     name: DIM_NAME.SMALL_UPPER_LINES,
-    desc: "小阳线数量",
+    desc: "小阳线数量<=2%",
   },
   {
     name: DIM_NAME.BIG_UPPER_LINES,
-    desc: "大阳线数量",
+    desc: "大阳线数量>=4%",
+  },
+  {
+    name: DIM_NAME.SMALL_DOWN_LINES,
+    desc: "小阴线数量<=2%",
   },
   // {
   //   name: "income_recent_3_year",

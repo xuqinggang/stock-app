@@ -59,7 +59,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
     for index, item in enumerate(stock_list_json):
         # for index, item in enumerate(stock_list_json[3830:3831]):
         try:
-            time.sleep(1)
+            time.sleep(2)
             target_stock_hist_item = stock_utils.dict_find_item(
                 stock_list_hist_json, item, "code"
             )
@@ -76,7 +76,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             if start_date > end_date:
                 continue
 
-            print("请求时间范围", start_date, end_date)
+            # print("请求时间范围", start_date, end_date)
             # 获取股票历史行情信息
             stock_zh_a_hist_df = ak.stock_zh_a_hist(
                 symbol=item["code"],
