@@ -59,24 +59,29 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
     for index, item in enumerate(stock_list_json):
         # for index, item in enumerate(stock_list_json[3830:3831]):
         try:
-            time.sleep(2)
+            time.sleep(1.5)
+            # print("股票:", item["name"], index)
+            start_date = (datetime.now() + timedelta(days=DIFF_DAY)).strftime("%Y%m%d")
+            target_stock_hist = None
             target_stock_hist_item = stock_utils.dict_find_item(
                 stock_list_hist_json, item, "code"
             )
             if not target_stock_hist_item is None:
                 target_stock_hist = target_stock_hist_item["hist"]
-                last_hist_item = target_stock_hist[-1]
+                if not target_stock_hist is None:
+                    last_hist_item = target_stock_hist[-1]
 
-                if not last_hist_item is None:
-                    start_date = last_hist_item["日期"]
-                    # 毫秒->秒 --> 格式化时间 (加一天的)
-                    start_date = (
-                        datetime.fromtimestamp(start_date / 1000) + timedelta(days=1)
-                    ).strftime("%Y%m%d")
+                    if not last_hist_item is None:
+                        start_date = last_hist_item["日期"]
+                        # 毫秒->秒 --> 格式化时间 (加一天的)
+                        start_date = (
+                            datetime.fromtimestamp(start_date / 1000)
+                            + timedelta(days=1)
+                        ).strftime("%Y%m%d")
             if start_date > end_date:
                 continue
 
-            # print("请求时间范围", start_date, end_date)
+            # print("请求时间范围:", item["name"], start_date, end_date)
             # 获取股票历史行情信息
             stock_zh_a_hist_df = ak.stock_zh_a_hist(
                 symbol=item["code"],
@@ -91,7 +96,8 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             stock_zh_a_hist_json = json.loads(stock_zh_a_hist_json_str)
             # 股票添加历史行情数组
             if isinstance(target_stock_hist, list):
-                stock_zh_a_hist_json = target_stock_hist.append(stock_zh_a_hist_json)
+                target_stock_hist.append(stock_zh_a_hist_json)
+                stock_zh_a_hist_json = target_stock_hist
 
             item["hist"] = stock_zh_a_hist_json
             stock_list_info.append(item)
