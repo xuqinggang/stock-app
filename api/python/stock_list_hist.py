@@ -68,8 +68,10 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             )
             if not target_stock_hist_item is None:
                 target_stock_hist = target_stock_hist_item["hist"]
-                if not target_stock_hist is None:
-                    last_hist_item = target_stock_hist[-1]
+                if not target_stock_hist is None and isinstance(
+                    target_stock_hist, list
+                ):
+                    last_hist_item = target_stock_hist[-2]
 
                     if not last_hist_item is None:
                         start_date = last_hist_item["日期"]
@@ -96,7 +98,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             stock_zh_a_hist_json = json.loads(stock_zh_a_hist_json_str)
             # 股票添加历史行情数组
             if isinstance(target_stock_hist, list):
-                target_stock_hist.append(stock_zh_a_hist_json)
+                target_stock_hist.extend(stock_zh_a_hist_json)
                 stock_zh_a_hist_json = target_stock_hist
 
             item["hist"] = stock_zh_a_hist_json
