@@ -68,10 +68,12 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             )
             if not target_stock_hist_item is None:
                 target_stock_hist = target_stock_hist_item["hist"]
+                # TODO: 数据有杂质, 修复下
+                target_stock_hist = target_stock_hist[0:-4]
                 if not target_stock_hist is None and isinstance(
                     target_stock_hist, list
                 ):
-                    last_hist_item = target_stock_hist[-2]
+                    last_hist_item = target_stock_hist[-1]
 
                     if not last_hist_item is None:
                         start_date = last_hist_item["日期"]
