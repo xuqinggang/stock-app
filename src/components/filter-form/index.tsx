@@ -32,6 +32,8 @@ export const FilterForm = observer((props: IProps) => {
   const dimConditionsFormValues = Form.useWatch("dim_conditions", form);
 
   const templateFormValue = Form.useWatch("template", form);
+  // 模板是否切换
+  const [templateSelected, setTemplateSelected] = useState(false);
 
   const { stocksStore } = useStocks();
   const {
@@ -71,6 +73,10 @@ export const FilterForm = observer((props: IProps) => {
     handleQueryClick();
   });
 
+  const handleTemplateSelect = useMemoizedFn(() => {
+    setTemplateSelected(!templateSelected);
+  });
+
   // 配置组-禁用
   const handleGroupDisable = useMemoizedFn((name, value) => {
     const dimConditionsValues = form.getFieldValue("dim_conditions");
@@ -98,11 +104,14 @@ export const FilterForm = observer((props: IProps) => {
       "xxxxxdimConditionsValue",
       dimConditionsValue,
       name,
-      curGroupValue
+      curGroupValue,
+      start_date,
+      end_date,
+      stocks?.[0]?.hist,
     );
     return stocks?.[0]?.hist?.filter(
       (histItem) =>
-        histItem["日期"] >= start_date && histItem["日期"] <= end_date
+        histItem["日期"] >= start_date && histItem["日期"] < end_date
     )?.length;
   });
 
@@ -130,8 +139,9 @@ export const FilterForm = observer((props: IProps) => {
 
   // 监听模板选择
   useEffect(() => {
-    console.log("xxxxxtemplateFormValues", templateFormValue);
-    if (templateFormValue && stocks?.length) {
+    const formValues = getStorageFormValues();
+    console.log("xxxxxformValues xxxxxtemplateFormValues", templateFormValue, formValues);
+    if (templateFormValue && stocks?.length && templateSelected) {
       const template = FORM_TEMPLATE_LIST.find(
         (item) => item.name === templateFormValue
       );
@@ -140,10 +150,11 @@ export const FilterForm = observer((props: IProps) => {
         form.setFieldsValue({
           dim_conditions: templateValues.dim_conditions,
         });
+        setTemplateSelected(false);
         setTimeout(() => handleQueryClick(), 1000);
       }
     }
-  }, [templateFormValue, stocks]);
+  }, [templateSelected, templateFormValue, stocks]);
 
   const DEFAULT_DIM_CONDITION = {
     range_date: enableRangeDate,
@@ -162,7 +173,7 @@ export const FilterForm = observer((props: IProps) => {
         style={{ maxWidth: 700 }}
       >
         <Form.Item name="template" label="选择模板">
-          <Select className="!w-[120px]" options={templateOptions} />
+          <Select className="!w-[300px]" options={templateOptions} onSelect={handleTemplateSelect}/>
         </Form.Item>
         <Form.List name="dim_conditions">
           {(fields, { add, remove }) => (

@@ -126,7 +126,7 @@ export function formatStocksByIndicatorDims(
           const rangePoints = getPointsByDayK(stockHist);
           // 时间区间内是否上行
           const { isUp, percentage } = judgeIfUpTrend(rangePoints);
-          if (stockItem?.name === "中京电子") {
+          if (stockItem?.name === "湘潭电化") {
             console.log(
               "xxxxxx0000000999",
               stockItem,

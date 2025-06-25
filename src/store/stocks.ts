@@ -106,7 +106,7 @@ export class StocksStore {
   };
 
   setStorage = (formValues: any) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formValues));
+    localStorage.setItem(STORAGE_KEY, formValues && JSON.stringify(formValues));
   };
 
   getStorageFormValues = () => {
