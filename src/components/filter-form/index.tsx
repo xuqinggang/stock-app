@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { IDimsCondition } from "@/types";
 import dayjs from "dayjs";
@@ -16,6 +16,9 @@ import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
 import { useStocks } from "@/provider/stocks-provider";
 import { DimThresholdList } from "./dim-threshold-list";
 import { useMemoizedFn } from "ahooks";
+import { FORM_TEMPLATE_LIST } from "./constant";
+import { IUpStockItemInfo } from "@api/types";
+import { template } from "lodash-es";
 
 const { RangePicker } = DatePicker;
 
@@ -28,6 +31,8 @@ export const FilterForm = observer((props: IProps) => {
   // HACK: 监听以便重新渲染
   const dimConditionsFormValues = Form.useWatch("dim_conditions", form);
 
+  const templateFormValue = Form.useWatch("template", form);
+
   const { stocksStore } = useStocks();
   const {
     stocks,
@@ -37,9 +42,18 @@ export const FilterForm = observer((props: IProps) => {
     getStorageFormValues,
   } = stocksStore;
 
+  const templateOptions = useMemo(
+    () =>
+      FORM_TEMPLATE_LIST?.map((item) => ({
+        label: item.name,
+        value: item.name,
+      })),
+    [FORM_TEMPLATE_LIST]
+  );
+
   const handleQueryClick = useMemoizedFn(() => {
     const formValues = form.getFieldsValue();
-    setStorage(formValues);
+    console.log("xxxxformValues", formValues);
     const dimConditions = formValues?.dim_conditions?.map((item: any) => ({
       ...item,
       range_date: [
@@ -49,6 +63,12 @@ export const FilterForm = observer((props: IProps) => {
     }));
     console.log("xxxxxx formValues", formValues, dimConditions);
     onQuery(dimConditions);
+  });
+
+  const handleCacheQueryClick = useMemoizedFn(() => {
+    const formValues = form.getFieldsValue();
+    setStorage(formValues);
+    handleQueryClick();
   });
 
   // 配置组-禁用
@@ -73,15 +93,24 @@ export const FilterForm = observer((props: IProps) => {
     const dimConditionsValue = form.getFieldValue("dim_conditions");
     const curGroupValue = dimConditionsValue[name];
     const start_date = curGroupValue.range_date?.[0]?.valueOf();
-    const end_date =  curGroupValue.range_date?.[1]?.add(1, 'day')?.valueOf();
+    const end_date = curGroupValue.range_date?.[1]?.add(1, "day")?.valueOf();
+    console.log(
+      "xxxxxdimConditionsValue",
+      dimConditionsValue,
+      name,
+      curGroupValue
+    );
     return stocks?.[0]?.hist?.filter(
       (histItem) =>
         histItem["日期"] >= start_date && histItem["日期"] <= end_date
     )?.length;
   });
 
+  // 初始化(storage)
   useEffect(() => {
-    if (!dimsOptions?.length) {return}
+    if (!dimsOptions?.length) {
+      return;
+    }
     const formValues = getStorageFormValues();
     console.log("xxxxxformValues", formValues);
     const initValues = formValues?.dim_conditions?.map((item: any) => ({
@@ -93,134 +122,167 @@ export const FilterForm = observer((props: IProps) => {
     }));
     form.setFieldsValue({
       dim_conditions: initValues,
+      template: formValues.template,
     });
     // HACK:待数据请求后
     setTimeout(() => handleQueryClick(), 1000);
   }, [dimsOptions]);
+
+  // 监听模板选择
+  useEffect(() => {
+    console.log("xxxxxtemplateFormValues", templateFormValue);
+    if (templateFormValue && stocks?.length) {
+      const template = FORM_TEMPLATE_LIST.find(
+        (item) => item.name === templateFormValue
+      );
+      const templateValues = template?.getFormValues?.(stocks);
+      if (templateValues?.dim_conditions) {
+        form.setFieldsValue({
+          dim_conditions: templateValues.dim_conditions,
+        });
+        setTimeout(() => handleQueryClick(), 1000);
+      }
+    }
+  }, [templateFormValue, stocks]);
 
   const DEFAULT_DIM_CONDITION = {
     range_date: enableRangeDate,
     is_up_trend: true,
     disabled: false,
   };
+
   return (
-    <Form
-      form={form}
-      labelCol={{ span: 3 }}
-      wrapperCol={{ span: 21 }}
-      layout="horizontal"
-      // disabled={componentDisabled}
-      style={{ maxWidth: 700 }}
-    >
-      <Form.List name="dim_conditions">
-        {(fields, { add, remove }) => (
-          <div style={{ display: "flex", rowGap: 16, flexDirection: "column" }}>
-            {fields.map(({ key, name, ...restField }) => {
-              const dimConditionsValue = form.getFieldValue("dim_conditions");
-              const ifDisabled = dimConditionsValue?.[name]?.disabled;
-              return (
-                <Card
-                  size="small"
-                  title={`配置组 ${name + 1}`}
-                  style={{ color: "gray" }}
-                  key={key}
-                  extra={
-                    <div className="flex items-center gap-[20px]">
-                      <Form.Item
-                        {...restField}
-                        name={[name, "disabled"]}
-                        className="mb-[0px]"
-                        // hidden={true}
-                      >
-                        <Switch
-                          className="w-[60px]"
-                          checkedChildren="禁用"
-                          onChange={(value) => handleGroupDisable(name, value)}
-                          // unCheckedChildren="关闭"
-                        />
-                      </Form.Item>
-                      {/* <Button onClick={() => handleDisabled(name)}>禁用</Button> */}
-                      <CloseOutlined
-                        onClick={() => {
-                          remove(name);
-                        }}
-                      />
-                    </div>
-                  }
-                >
-                  <div
+    <>
+      <Form
+        form={form}
+        labelCol={{ span: 3 }}
+        wrapperCol={{ span: 21 }}
+        layout="horizontal"
+        // disabled={componentDisabled}
+        style={{ maxWidth: 700 }}
+      >
+        <Form.Item name="template" label="选择模板">
+          <Select className="!w-[120px]" options={templateOptions} />
+        </Form.Item>
+        <Form.List name="dim_conditions">
+          {(fields, { add, remove }) => (
+            <div
+              style={{ display: "flex", rowGap: 16, flexDirection: "column" }}
+            >
+              {fields.map(({ key, name, ...restField }) => {
+                const dimConditionsValue = form.getFieldValue("dim_conditions");
+                const ifDisabled = dimConditionsValue?.[name]?.disabled;
+                return (
+                  <Card
+                    size="small"
+                    title={`配置组 ${name + 1}`}
+                    style={{ color: "gray" }}
                     key={key}
-                    style={{ display: "flex-col", marginBottom: 8 }}
+                    extra={
+                      <div className="flex items-center gap-[20px]">
+                        <Form.Item
+                          {...restField}
+                          name={[name, "disabled"]}
+                          className="mb-[0px]"
+                          // hidden={true}
+                        >
+                          <Switch
+                            className="w-[60px]"
+                            checkedChildren="禁用"
+                            onChange={(value) =>
+                              handleGroupDisable(name, value)
+                            }
+                            // unCheckedChildren="关闭"
+                          />
+                        </Form.Item>
+                        {/* <Button onClick={() => handleDisabled(name)}>禁用</Button> */}
+                        <CloseOutlined
+                          onClick={() => {
+                            remove(name);
+                          }}
+                        />
+                      </div>
+                    }
                   >
-                    {/* <Form.Item
+                    <div
+                      key={key}
+                      style={{ display: "flex-col", marginBottom: 8 }}
+                    >
+                      {/* <Form.Item
                     {...restField}
                     name={[name, "disabled"]}
                     hidden={true}
                   >
                     <Switch />
                   </Form.Item> */}
-                    <Form.Item
-                      {...restField}
-                      name={[name, "range_date"]}
-                      label="时间范围"
-                      rules={[{ required: true }]}
-                      extra={`行情天数: ${computeHistDay(name)}`}
-                    >
-                      <RangePicker
-                        disabled={ifDisabled}
-                        minDate={enableRangeDate?.[0]}
-                        maxDate={enableRangeDate?.[1]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "is_up_trend"]}
-                      label="是否上涨"
-                      rules={[{ required: true }]}
-                    >
-                      <Select
-                        disabled={ifDisabled}
-                        className="!w-[120px]"
-                        options={[
-                          { value: true, label: "是" },
-                          { value: false, label: "否" },
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "dims_threshold"]}
-                      label="指标过滤"
-                    >
-                      <DimThresholdList
-                        dimsOptions={dimsOptions}
-                        disabled={ifDisabled}
-                      />
-                    </Form.Item>
-                  </div>
-                </Card>
-              );
-            })}
-            <div className="flex justify-between px-[10px]">
-              <Form.Item>
-                <Button
-                  type="dashed"
-                  onClick={() => add(DEFAULT_DIM_CONDITION)}
-                  block
-                  icon={<PlusOutlined />}
-                >
-                  Add field
-                </Button>
-              </Form.Item>
-              <Form.Item>
-                <Button type="primary" onClick={handleQueryClick}>
-                  查询
-                </Button>
-              </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "range_date"]}
+                        label="时间范围"
+                        rules={[{ required: true }]}
+                        extra={`行情天数: ${computeHistDay(name)}`}
+                      >
+                        <RangePicker
+                          disabled={ifDisabled}
+                          minDate={enableRangeDate?.[0]}
+                          maxDate={enableRangeDate?.[1]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "is_up_trend"]}
+                        label="是否上涨"
+                        rules={[{ required: true }]}
+                      >
+                        <Select
+                          disabled={ifDisabled}
+                          className="!w-[120px]"
+                          options={[
+                            { value: true, label: "是" },
+                            { value: false, label: "否" },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "dims_threshold"]}
+                        label="指标过滤"
+                      >
+                        <DimThresholdList
+                          dimsOptions={dimsOptions}
+                          disabled={ifDisabled}
+                        />
+                      </Form.Item>
+                    </div>
+                  </Card>
+                );
+              })}
+              <div className="flex px-[10px] gap-x-[10px]">
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add(DEFAULT_DIM_CONDITION)}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add field
+                  </Button>
+                </Form.Item>
+                <Form.Item>
+                  <Button type="primary" onClick={handleQueryClick}>
+                    查询
+                  </Button>
+                </Form.Item>
+                <Form.Item>
+                  <Button type="primary" onClick={handleCacheQueryClick}>
+                    表单缓存查询
+                  </Button>
+                </Form.Item>
+              </div>
             </div>
-          </div>
-        )}
-      </Form.List>
-    </Form>
+          )}
+        </Form.List>
+      </Form>
+    </>
   );
 });

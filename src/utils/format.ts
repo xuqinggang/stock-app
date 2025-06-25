@@ -10,14 +10,21 @@ import {
 import { calculateMA5 } from "@/utils/indicator";
 import { pearsonCorrelationCoefficient } from "@/utils/algorithm";
 import { IDimThresholdItem, IDimsCondition } from "@/types";
-import { ifSmallUpperLines, ifBigUpperLines, ifSmallDownLines, isUpperShadowLines, isDownShadowLines } from '.';
+import {
+  ifSmallUpperLines,
+  ifBigUpperLines,
+  ifSmallDownLines,
+  isUpperShadowLines,
+  isDownShadowLines,
+  getLastHistItem,
+} from ".";
 import _ from "lodash-es";
 
 const ONE_YI = 100000000;
 
 // 格式化选中的股票为K线图
 export function formatStockHistToKLine(stockItem: IUpStockItemInfo) {
-  console.log('xxxxstockItem', stockItem);
+  console.log("xxxxstockItem", stockItem);
   return stockItem?.hist?.map((item) => {
     return {
       high: item.最高,
@@ -84,7 +91,9 @@ export function formatStocksByIndicatorDims(
 ): IUpStockItemInfo[] {
   const { stockHotTopicMap } = options || {};
 
-  console.log('xxxxxx000', stocks);
+  console.log("xxxxxx000", stocks);
+  const test = stocks?.find((item) => item.name === "中京电子");
+  console.log("xxxxxx00000", test);
   // 获取多个条件组筛查出的股票, 最终需要对其取交集
   const stocksRtArr = dimsConditions
     ?.filter((item) => !item.disabled)
@@ -117,8 +126,27 @@ export function formatStocksByIndicatorDims(
           const rangePoints = getPointsByDayK(stockHist);
           // 时间区间内是否上行
           const { isUp, percentage } = judgeIfUpTrend(rangePoints);
-          if (stockItem.name === '德邦股份'){
-            console.log('xxxxxx000', stockItem, isUp, percentage);
+          if (stockItem?.name === "中京电子") {
+            console.log(
+              "xxxxxx0000000999",
+              stockItem,
+              stockHist,
+              rangePoints,
+              isUp,
+              percentage,
+            );
+            const filterCount = stockHist?.forEach((histItem) => {
+              console.log(
+                "xxxxxx000099988",
+                histItem,
+                getLastHistItem(histItem, stockItem?.hist),
+                isUpperShadowLines(histItem, stockItem?.hist),
+                isDownShadowLines(histItem, stockItem?.hist),
+                ifSmallUpperLines(histItem, stockItem?.hist),
+                ifBigUpperLines(histItem, stockItem?.hist),
+                ifSmallDownLines(histItem, stockItem?.hist)
+              );
+            });
           }
           // if (stockItem?.code === "605088") {
           //   console.log("xxxxxxtest", stockItem, stockHist, rangePoints, isUp);
@@ -359,32 +387,36 @@ export function formatStocksByIndicatorDims(
                 }
                 // 满足阳上影线的数量
                 case DIM_NAME.UPPER_SHADOW_LINE: {
-                  const filterCount = stockHist?.filter(isUpperShadowLines)?.length;
+                  const filterCount = stockHist?.filter((histItem) =>
+                    isUpperShadowLines(histItem, stockItem?.hist)
+                  )?.length;
                   filterCondition.push(() => {
                     return judgeMatchThreshold(filterCount, {
                       operator,
                       threshold: threshold,
-                    })
-                  });                  
+                    });
+                  });
                   break;
                 }
                 // 满足阴上影线的数量
                 case DIM_NAME.UPPER_SHADOW_LINE: {
-                  const filterCount = stockHist?.filter(isDownShadowLines)?.length;
+                  const filterCount = stockHist?.filter((histItem) =>
+                    isDownShadowLines(histItem, stockItem?.hist)
+                  )?.length;
                   filterCondition.push(() => {
                     return judgeMatchThreshold(filterCount, {
                       operator,
                       threshold: threshold,
-                    })
-                  });                  
+                    });
+                  });
                   break;
                 }
                 // 连续小阳线数量
                 case DIM_NAME.MULTIPLE_UPPER_LINES: {
                   let tempCount = 0;
                   let maxCount = 0;
-                  stockHist?.forEach(histItem => {
-                    if(ifSmallUpperLines(histItem)) {
+                  stockHist?.forEach((histItem) => {
+                    if (ifSmallUpperLines(histItem, stockItem?.hist)) {
                       tempCount++;
                       maxCount = Math.max(maxCount, tempCount);
                     } else {
@@ -395,46 +427,46 @@ export function formatStocksByIndicatorDims(
                     return judgeMatchThreshold(maxCount, {
                       operator,
                       threshold: threshold,
-                    })
+                    });
                   });
                   break;
                 }
                 // 小阳线数量
                 case DIM_NAME.SMALL_UPPER_LINES: {
-                  const filterCount = stockHist?.filter(histItem => {
-                    return ifSmallUpperLines(histItem)
+                  const filterCount = stockHist?.filter((histItem) => {
+                    return ifSmallUpperLines(histItem, stockItem?.hist);
                   })?.length;
                   filterCondition.push(() => {
                     return judgeMatchThreshold(filterCount, {
                       operator,
                       threshold: threshold,
-                    })
+                    });
                   });
                   break;
                 }
                 // 大阳线数量
                 case DIM_NAME.BIG_UPPER_LINES: {
-                  const filterCount = stockHist?.filter(histItem => {
-                    return ifBigUpperLines(histItem)
+                  const filterCount = stockHist?.filter((histItem) => {
+                    return ifBigUpperLines(histItem, stockItem?.hist);
                   })?.length;
                   filterCondition.push(() => {
                     return judgeMatchThreshold(filterCount, {
                       operator,
                       threshold: threshold,
-                    })
+                    });
                   });
                   break;
                 }
                 // 小阴线数量
                 case DIM_NAME.SMALL_DOWN_LINES: {
-                  const filterCount = stockHist?.filter(histItem => {
-                    return ifSmallDownLines(histItem)
+                  const filterCount = stockHist?.filter((histItem) => {
+                    return ifSmallDownLines(histItem, stockItem?.hist);
                   })?.length;
                   filterCondition.push(() => {
                     return judgeMatchThreshold(filterCount, {
                       operator,
                       threshold: threshold,
-                    })
+                    });
                   });
                   break;
                 }

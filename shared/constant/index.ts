@@ -218,11 +218,11 @@ export const DIMS_THRESHOLD = [
   },
   {
     name: DIM_NAME.BIG_UPPER_LINES,
-    desc: "大阳线数量>=4%",
+    desc: "大阳线数量>=3%",
   },
   {
     name: DIM_NAME.SMALL_DOWN_LINES,
-    desc: "小阴线数量<=2%",
+    desc: "小阴线数量>=-2%",
   },
   // {
   //   name: "income_recent_3_year",
