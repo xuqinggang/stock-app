@@ -131,7 +131,7 @@ export const FilterForm = observer((props: IProps) => {
     }));
     form.setFieldsValue({
       dim_conditions: initValues,
-      template: formValues.template,
+      template: formValues?.template,
     });
     // HACK:待数据请求后
     setTimeout(() => handleQueryClick(), 1000);
