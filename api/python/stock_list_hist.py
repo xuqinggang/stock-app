@@ -59,7 +59,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
     for index, item in enumerate(stock_list_json):
         # for index, item in enumerate(stock_list_json[3830:3831]):
         try:
-            time.sleep(1.5)
+            time.sleep(2)
             # print("股票:", item["name"], index)
             start_date = (datetime.now() + timedelta(days=DIFF_DAY)).strftime("%Y%m%d")
             target_stock_hist = None
