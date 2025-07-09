@@ -11,6 +11,7 @@ import { calculateMA5 } from "@/utils/indicator";
 import { pearsonCorrelationCoefficient } from "@/utils/algorithm";
 import { IDimThresholdItem, IDimsCondition } from "@/types";
 import {
+  isNoDownShadowLines,
   ifSmallUpperLines,
   ifBigUpperLines,
   ifSmallDownLines,
@@ -126,7 +127,7 @@ export function formatStocksByIndicatorDims(
           const rangePoints = getPointsByDayK(stockHist);
           // 时间区间内是否上行
           const { isUp, percentage } = judgeIfUpTrend(rangePoints);
-          if (stockItem?.name === "湘潭电化") {
+          if (stockItem?.name === "中京电子") {
             console.log(
               "xxxxxx0000000999",
               stockItem,
@@ -144,7 +145,8 @@ export function formatStocksByIndicatorDims(
                 isDownShadowLines(histItem, stockItem?.hist),
                 ifSmallUpperLines(histItem, stockItem?.hist),
                 ifBigUpperLines(histItem, stockItem?.hist),
-                ifSmallDownLines(histItem, stockItem?.hist)
+                ifSmallDownLines(histItem, stockItem?.hist),
+                isNoDownShadowLines(histItem, stockItem?.hist),
               );
             });
           }
@@ -386,7 +388,7 @@ export function formatStocksByIndicatorDims(
                   break;
                 }
                 // 满足阳上影线的数量
-                case DIM_NAME.UPPER_SHADOW_LINE: {
+                case DIM_NAME.YANG_UPPER_SHADOW_LINE: {
                   const filterCount = stockHist?.filter((histItem) =>
                     isUpperShadowLines(histItem, stockItem?.hist)
                   )?.length;
@@ -399,9 +401,22 @@ export function formatStocksByIndicatorDims(
                   break;
                 }
                 // 满足阴上影线的数量
-                case DIM_NAME.UPPER_SHADOW_LINE: {
+                case DIM_NAME.YIN_UPPER_SHADOW_LINE: {
                   const filterCount = stockHist?.filter((histItem) =>
                     isDownShadowLines(histItem, stockItem?.hist)
+                  )?.length;
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(filterCount, {
+                      operator,
+                      threshold: threshold,
+                    });
+                  });
+                  break;
+                }
+                // 满足无下影线的数量
+                case DIM_NAME.NO_DOWN_SHADOW_LINE: {
+                  const filterCount = stockHist?.filter((histItem) =>
+                    isNoDownShadowLines(histItem, stockItem?.hist)
                   )?.length;
                   filterCondition.push(() => {
                     return judgeMatchThreshold(filterCount, {

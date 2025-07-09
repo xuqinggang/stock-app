@@ -38,6 +38,13 @@ export const isDownShadowLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
   const 开盘 = getLastHistItem(histItem, allHistItem)?.收盘 || histItem.开盘;
   return 开盘 > 收盘 && 最高 > 开盘 && 最高 - 开盘 > (开盘 - 收盘) / 3;
 };
+// 无下影线
+export const isNoDownShadowLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
+  const { 收盘, 最高, 最低 } = histItem;
+  const 开盘 = getLastHistItem(histItem, allHistItem)?.收盘 || histItem.开盘;
+  const minData = Math.min(开盘, 收盘);
+  return Math.abs(minData - 最低) <= 0 || Number((Math.abs(minData - 最低) / (开盘 * 0.1)).toFixed(4)) <= 0.15
+};
 // 是否小阳线(涨幅在[0, 2%]以内)
 export const ifSmallUpperLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
   const { 收盘, 最高, 最低 } = histItem;
