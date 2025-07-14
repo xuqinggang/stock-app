@@ -57,6 +57,12 @@ export const ifBigUpperLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
   const 开盘 = getLastHistItem(histItem, allHistItem)?.收盘 || histItem.开盘;
   return 收盘 > 开盘 && Number(((收盘 - 开盘) / 开盘).toFixed(4)) >= 0.03;
 };
+// 涨停数量 >= 9%
+export const ifZhangTingLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
+  const { 收盘, 最高, 最低 } = histItem;
+  const 开盘 = getLastHistItem(histItem, allHistItem)?.收盘 || histItem.开盘;
+  return 收盘 > 开盘 && Number(((收盘 - 开盘) / 开盘).toFixed(4)) >= 0.09;
+};
 
 // 小阴线(跌幅[-2%, 0]以内)
 export const ifSmallDownLines = (histItem: IDayK, allHistItem?: IDayK[]) => {

@@ -20,19 +20,26 @@ import { useImmer } from "use-immer";
 
 const Index = observer(() => {
   const { stocksStore } = useStocks();
-  const { stocks, stockHotTopicMap, setDimsConditions, dimsConditions } =
+  const { stocks, stockHotTopicMap, setDimsConditions, dimsConditions, getStorageCheckedStocks } =
     stocksStore;
   console.log("xxxxstocks", stocks);
 
+  // 筛查后且排序后的股票列表
   const [formatStocks, setFormatStocks] = useImmer<IUpStockItemInfo[]>([]);
 
   const handleQuery = useMemoizedFn((dimsConditions: IDimsCondition[]) => {
+    const checkedCodes = getStorageCheckedStocks();
     console.log("xxxxxhandleQuery-dimsCondition", dimsConditions);
     setDimsConditions(dimsConditions);
     if (dimsConditions) {
       const formatStocks = formatStocksByIndicatorDims(stocks, dimsConditions, {
         stockHotTopicMap,
       });
+      formatStocks?.forEach(item => {
+        if (checkedCodes?.includes(item.code)) {
+          item.isChecked = true;
+        }
+      })
       setFormatStocks(formatStocks);
       console.log("xxxxxhandleQuery-formatStocks", formatStocks);
     }

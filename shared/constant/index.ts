@@ -28,6 +28,7 @@ export const DIM_NAME = {
   MULTIPLE_UPPER_LINES: 'multiple_upper_lines', // 连续小阳线
   SMALL_UPPER_LINES: 'small_upper_lines', // 小阳线数量
   BIG_UPPER_LINES: 'big_upper_lines', // 大阳线数量
+  ZHANG_TING_LINES: 'zhang_ting_lines', // 涨停阳线数量
   SMALL_DOWN_LINES: 'small_down_lines', // 小阴线数量
   UPPER_SHADOW_SMALL_DOWN_LINES: 'upper_shadow_small_down_lines', // 上影小阴线数量
   // BIG_DOWN_LINES: 'big_down_lines', // 大阴线数量
@@ -224,6 +225,10 @@ export const DIMS_THRESHOLD = [
   {
     name: DIM_NAME.BIG_UPPER_LINES,
     desc: "大阳线数量>=3%",
+  },
+  {
+    name: DIM_NAME.ZHANG_TING_LINES,
+    desc: "涨停数量>=9%",
   },
   {
     name: DIM_NAME.SMALL_DOWN_LINES,

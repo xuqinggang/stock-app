@@ -6,7 +6,9 @@ import { get as getDims } from "@api/get_dims";
 import { IDimInfoOption, IDimsCondition } from "@/types";
 import dayjs from "dayjs";
 
-const STORAGE_KEY = "stock-app-formvalues";
+const STORAGE_FORM_VALUES_KEY = "stock-app-formvalues";
+
+const STORAGE_CHECKED_STOCKS_KEY = "stock-app-checked-stocks";
 export class StocksStore {
   // 所有股票
   stocks: Array<IUpStockItemInfo> = [];
@@ -105,15 +107,39 @@ export class StocksStore {
     this.dimsConditions = dimsConditions;
   };
 
-  setStorage = (formValues: any) => {
-    localStorage.setItem(STORAGE_KEY, formValues && JSON.stringify(formValues));
+  setStorageFormValues = (formValues: any) => {
+    localStorage.setItem(
+      STORAGE_FORM_VALUES_KEY,
+      formValues && JSON.stringify(formValues)
+    );
   };
 
   getStorageFormValues = () => {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) as string);
+      return JSON.parse(
+        localStorage.getItem(STORAGE_FORM_VALUES_KEY) as string
+      );
     } catch (e) {
       return {};
+    }
+  };
+
+  setStorageCheckedStocks = (stockCodes: string[]) => {
+    if (stockCodes?.length) {
+      localStorage.setItem(
+        STORAGE_CHECKED_STOCKS_KEY,
+        JSON.stringify(stockCodes)
+      );
+    }
+  };
+
+  getStorageCheckedStocks = () => {
+    try {
+      return JSON.parse(
+        localStorage.getItem(STORAGE_CHECKED_STOCKS_KEY) as string
+      ) || [];
+    } catch (e) {
+      return [];
     }
   };
 }

@@ -7,16 +7,24 @@ import { getStockAttributionCode } from "@/utils";
 import { Button, Card, Select, Space, Tag } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { CheckSquareOutlined, PlusSquareOutlined } from "@ant-design/icons";
+import { Updater } from "use-immer";
 
 interface IProps {
   formatStocks: IUpStockItemInfo[];
+  setFormatStocks: Updater<IUpStockItemInfo[]>;
   onStockSelect?: (stockItem: IUpStockItemInfo, isSelected?: boolean) => void;
   onStockCheck?: (stockItem: IUpStockItemInfo) => void;
 
   selectedStock?: IUpStockItemInfo | null;
 }
 export const SortedStocksList = (props: IProps) => {
-  const { formatStocks, onStockSelect, onStockCheck, selectedStock } = props;
+  const {
+    formatStocks,
+    setFormatStocks,
+    onStockSelect,
+    onStockCheck,
+    selectedStock,
+  } = props;
 
   // 市值/营收/利润排序(默认升序)
   const [sortMap, setSortMap] = useState({
@@ -41,16 +49,16 @@ export const SortedStocksList = (props: IProps) => {
   );
 
   // 排序后的股票列表
-  const sortedFormatStocks = useMemo(() => {
-    const [sortK, sortV] =
-      Object.entries(sortMap).find(([sortK, sortV]) => sortV <= 1) || [];
-    if (sortK) {
-      return formatStocks?.sort((a: any, b: any) =>
-        sortV === 0 ? a[sortK] - b[sortK] : b[sortK] - a[sortK]
-      );
-    }
-    return formatStocks;
-  }, [formatStocks, sortMap]);
+  // const sortedFormatStocks = useMemo(() => {
+  //   const [sortK, sortV] =
+  //     Object.entries(sortMap).find(([sortK, sortV]) => sortV <= 1) || [];
+  //   if (sortK) {
+  //     return formatStocks?.sort((a: any, b: any) =>
+  //       sortV === 0 ? a[sortK] - b[sortK] : b[sortK] - a[sortK]
+  //     );
+  //   }
+  //   return formatStocks;
+  // }, [formatStocks, sortMap]);
 
   // 监听键盘事件, 股票添加到备选列表
   const PopupKeyUp = useMemoizedFn((e) => {
@@ -74,6 +82,19 @@ export const SortedStocksList = (props: IProps) => {
       document.removeEventListener("keyup", PopupKeyUp, false);
     };
   }, []);
+
+  useEffect(() => {
+    const [sortK, sortV] =
+      Object.entries(sortMap).find(([_, sortV]) => sortV <= 1) || [];
+
+    if (sortK) {
+      setFormatStocks(
+        [...formatStocks]?.sort((a: any, b: any) =>
+          sortV === 0 ? a[sortK] - b[sortK] : b[sortK] - a[sortK]
+        )
+      );
+    }
+  }, [sortMap]);
 
   return (
     <div className="flex flex-col">
@@ -113,7 +134,7 @@ export const SortedStocksList = (props: IProps) => {
         className="flex flex-col h-[calc(100vh-60px)] px-[3px] gap-y-[5px] overflow-y-auto"
         style={{ border: "1px solid black" }}
       >
-        {sortedFormatStocks?.map((stockItem) => {
+        {formatStocks?.map((stockItem) => {
           return (
             <div
               className="flex items-center justify-between"
@@ -135,12 +156,12 @@ export const SortedStocksList = (props: IProps) => {
               </div>
               {stockItem?.isChecked ? (
                 <CheckSquareOutlined
-                  color="green"
-                  onClick={() => onStockCheck?.(selectedStock!)}
+                  style={{ color: "green" }}
+                  onClick={() => onStockCheck?.(stockItem!)}
                 />
               ) : (
                 <PlusSquareOutlined
-                  onClick={() => onStockCheck?.(selectedStock!)}
+                  onClick={() => onStockCheck?.(stockItem!)}
                 />
               )}
             </div>

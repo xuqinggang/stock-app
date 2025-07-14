@@ -89,10 +89,17 @@ export const SelectStocksModule = memo((props: IProps) => {
 
   // 股票check选中
   const handleCheckStockItem = useMemoizedFn((stockItem: IUpStockItemInfo) => {
+    console.log("xxxxhandleCheckStockItem", stockItem, formatStocks);
     const tIndex = formatStocks?.findIndex(
       (item) => item.code === stockItem.code
     );
     setFormatStocks((draft) => {
+      console.log(
+        "xxxxhandleCheckStockItem xxxxxttt",
+        draft,
+        tIndex,
+        draft[tIndex]
+      );
       draft[tIndex].isChecked = !draft[tIndex].isChecked;
     });
   });
@@ -215,9 +222,15 @@ export const SelectStocksModule = memo((props: IProps) => {
         onStockSelect={handleSelectClick}
         formatStocks={formatStocks}
         onStockCheck={handleCheckStockItem}
+        setFormatStocks={setFormatStocks}
       />
       {/* 最右侧checked=true的股票列表 */}
-      <CheckedStocksList formatStocks={formatStocks} />
+      <CheckedStocksList
+        className="ml-[10px]"
+        selectedStock={selectTagStock}
+        onStockSelect={handleSelectClick}
+        formatStocks={formatStocks}
+      />
     </div>
   );
 });

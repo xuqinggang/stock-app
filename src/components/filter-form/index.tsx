@@ -40,7 +40,7 @@ export const FilterForm = observer((props: IProps) => {
     stocks,
     enableRangeDate,
     dimsOptions,
-    setStorage,
+    setStorageFormValues,
     getStorageFormValues,
   } = stocksStore;
 
@@ -69,7 +69,7 @@ export const FilterForm = observer((props: IProps) => {
 
   const handleCacheQueryClick = useMemoizedFn(() => {
     const formValues = form.getFieldsValue();
-    setStorage(formValues);
+    setStorageFormValues(formValues);
     handleQueryClick();
   });
 

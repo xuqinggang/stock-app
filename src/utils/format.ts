@@ -18,6 +18,7 @@ import {
   isUpperShadowLines,
   isDownShadowLines,
   getLastHistItem,
+  ifZhangTingLines,
 } from ".";
 import _ from "lodash-es";
 
@@ -134,7 +135,7 @@ export function formatStocksByIndicatorDims(
               stockHist,
               rangePoints,
               isUp,
-              percentage,
+              percentage
             );
             const filterCount = stockHist?.forEach((histItem) => {
               console.log(
@@ -146,7 +147,7 @@ export function formatStocksByIndicatorDims(
                 ifSmallUpperLines(histItem, stockItem?.hist),
                 ifBigUpperLines(histItem, stockItem?.hist),
                 ifSmallDownLines(histItem, stockItem?.hist),
-                isNoDownShadowLines(histItem, stockItem?.hist),
+                isNoDownShadowLines(histItem, stockItem?.hist)
               );
             });
           }
@@ -463,6 +464,19 @@ export function formatStocksByIndicatorDims(
                 case DIM_NAME.BIG_UPPER_LINES: {
                   const filterCount = stockHist?.filter((histItem) => {
                     return ifBigUpperLines(histItem, stockItem?.hist);
+                  })?.length;
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(filterCount, {
+                      operator,
+                      threshold: threshold,
+                    });
+                  });
+                  break;
+                }
+                // 涨停数量
+                case DIM_NAME.ZHANG_TING_LINES: {
+                  const filterCount = stockHist?.filter((histItem) => {
+                    return ifZhangTingLines(histItem, stockItem?.hist);
                   })?.length;
                   filterCondition.push(() => {
                     return judgeMatchThreshold(filterCount, {
