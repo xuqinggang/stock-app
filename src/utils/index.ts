@@ -38,7 +38,7 @@ export const isDownShadowLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
   const 开盘 = getLastHistItem(histItem, allHistItem)?.收盘 || histItem.开盘;
   return 开盘 > 收盘 && 最高 > 开盘 && 最高 - 开盘 > (开盘 - 收盘) / 3;
 };
-// 无下影线
+// 无下影线(下影线很短)
 export const isNoDownShadowLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
   const { 收盘, 最高, 最低 } = histItem;
   const 开盘 = getLastHistItem(histItem, allHistItem)?.收盘 || histItem.开盘;
