@@ -12,7 +12,7 @@ import { Updater } from "use-immer";
 interface IProps {
   formatStocks: IUpStockItemInfo[];
   setFormatStocks: Updater<IUpStockItemInfo[]>;
-  onStockSelect?: (stockItem: IUpStockItemInfo, isSelected?: boolean) => void;
+  onStockSelect?: (stockItem: IUpStockItemInfo, isSelected?: boolean, area?: 'sorted' | 'checked') => void;
   onStockCheck?: (stockItem: IUpStockItemInfo) => void;
 
   selectedStock?: IUpStockItemInfo | null;
@@ -148,7 +148,7 @@ export const SortedStocksList = (props: IProps) => {
                   className="cursor-pointer"
                   key={stockItem?.code}
                   checked={stockItem?.code === selectedStock?.code}
-                  onChange={(check) => onStockSelect?.(stockItem, check)}
+                  onChange={(check) => onStockSelect?.(stockItem, check, 'sorted')}
                 >
                   {stockItem.name} - 市值:{stockItem.market_recent?.toFixed(2)}{" "}
                   - 营收:{stockItem.income_recent_year?.toFixed(2)}

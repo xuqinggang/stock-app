@@ -33,6 +33,7 @@ export const SelectStocksModule = memo((props: IProps) => {
   } = props;
   console.log("xxxxSelectStocksModule", formatStocks);
 
+  const [clickedArea, setClickedArea] = useState<'sorted' | 'checked'>('sorted');
   // 可查看多个股票的自定义趋势图
   const [selectCodeStocks, setSelectCodeStocks] = useState<string[]>([]);
   // 选中的单个股票
@@ -115,7 +116,8 @@ export const SelectStocksModule = memo((props: IProps) => {
 
   // 选中某个股票
   const handleSelectClick = useMemoizedFn(
-    (stockItem: IUpStockItemInfo, check?: boolean) => {
+    (stockItem: IUpStockItemInfo, check?: boolean, area?: 'sorted' | 'checked') => {
+      setClickedArea(area || 'sorted');
       console.log("xxxxxhandleTagClick", stockItem);
       setSelectTagStock(stockItem);
       if (!check) {
@@ -133,6 +135,9 @@ export const SelectStocksModule = memo((props: IProps) => {
     const tIndex = formatStocks?.findIndex(
       (item) => item.code === selectTagStock.code
     );
+    if (clickedArea !== 'sorted') {
+      return;
+    }
     if (e.code === "Escape") {
     }
     if (e.code === "ArrowDown") {
@@ -230,6 +235,7 @@ export const SelectStocksModule = memo((props: IProps) => {
         selectedStock={selectTagStock}
         onStockSelect={handleSelectClick}
         formatStocks={formatStocks}
+        clickedArea={clickedArea}
       />
     </div>
   );
