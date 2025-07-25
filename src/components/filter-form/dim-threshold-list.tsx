@@ -78,31 +78,39 @@ export const DimThresholdList = memo((props: IProps) => {
       {innerValue.map((valueItem, idx) => {
         const showBtn = idx === innerValue.length - 1;
         return (
-          <div
-            key={`${idx}_${valueItem.name}`}
-            className="flex items-center gap-[6px]"
-          >
-            <DimThresholdItem
-              dimsOptions={dimsOptions}
-              value={valueItem}
-              onChange={(v) => v && handleItemChange(v, idx)}
-            />
-            <Divider type="vertical" style={{ height: 12, margin: "unset" }} />
-            <DeleteOutlined
-              onClick={() => {
-                handleItemDelete(idx);
-              }}
-              className="cursor-pointer"
-            />
-            <PauseCircleOutlined onClick={() => handleItemDisable(idx)} />
+          <div>
+            <div
+              key={`${idx}_${valueItem.name}`}
+              className="flex items-center gap-[6px]"
+            >
+              <DimThresholdItem
+                dimsOptions={dimsOptions}
+                value={valueItem}
+                onChange={(v) => v && handleItemChange(v, idx)}
+              />
+              <Divider
+                type="vertical"
+                style={{ height: 12, margin: "unset" }}
+              />
+              <DeleteOutlined
+                onClick={() => {
+                  handleItemDelete(idx);
+                }}
+                className="cursor-pointer"
+              />
+              <PauseCircleOutlined onClick={() => handleItemDisable(idx)} />
+            </div>
             {showBtn && (
               <AddItemBtn
                 btnNode={"条件"}
                 onItemAdd={() =>
-                  handleItemChange({
-                    ...DEFAULT_DIM_THRESHOLD,
-                    disabled,
-                  }, innerValue.length)
+                  handleItemChange(
+                    {
+                      ...DEFAULT_DIM_THRESHOLD,
+                      disabled,
+                    },
+                    innerValue.length
+                  )
                 }
               />
             )}

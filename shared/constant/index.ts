@@ -34,7 +34,11 @@ export const DIM_NAME = {
   // BIG_DOWN_LINES: 'big_down_lines', // 大阴线数量
   // SMALL_DOWN_LINES: 'small_down_lines', // 上影小阴线数量
   // 是否左后一
-  // 每天收盘价大于5日线均价
+
+  // 当天盘价大于5日线均价数量
+  MA5_LINES: 'ma5_lines',
+  // 当天盘价大于10日线均价数量
+  MA10_LINES: 'ma10_lines',
 };
 
 // 维度, 包含筛选, 多选/单选
@@ -220,19 +224,27 @@ export const DIMS_THRESHOLD = [
   },
   {
     name: DIM_NAME.SMALL_UPPER_LINES,
-    desc: "小阳线数量<=2%",
+    desc: "小阳线数量|<=3%",
   },
   {
     name: DIM_NAME.BIG_UPPER_LINES,
-    desc: "大阳线数量>=3%",
+    desc: "大阳线数量|>=3%",
   },
   {
     name: DIM_NAME.ZHANG_TING_LINES,
-    desc: "涨停数量>=9%",
+    desc: "涨停数量|>=9%",
   },
   {
     name: DIM_NAME.SMALL_DOWN_LINES,
-    desc: "小阴线数量>=-2%",
+    desc: "小阴线数量|>=-2%",
+  },
+  {
+    name: DIM_NAME.MA5_LINES,
+    desc: "5日线上数量",
+  },
+  {
+    name: DIM_NAME.MA10_LINES,
+    desc: "10日线上数量",
   },
   // {
   //   name: "income_recent_3_year",

@@ -411,4 +411,91 @@ export const FORM_TEMPLATE_LIST = [
       };
     },
   },
+  {
+    name: "4天内1个大阳至少2个小阳模板",
+    getFormValues: (stocks: IUpStockItemInfo[]) => {
+      const len = stocks?.[0]?.hist?.length;
+      const endHistItem = stocks?.[0]?.hist?.[len - 1]; // 21-24  6.27-18  
+      const startHistItem = stocks?.[0]?.hist?.[len - 4]; // 14-17 6.20-11
+
+      const startHistItem2 = stocks?.[0]?.hist?.[len - 20];
+      const endHistItem2 = stocks?.[0]?.hist?.[len - 5];
+      return {
+        dim_conditions: [
+          {
+            disabled: false,
+            is_up_trend: true,
+            // 最近4天
+            range_date: [dayjs(startHistItem?.日期), dayjs(endHistItem?.日期)],
+            dims_threshold: [
+              {
+                // 1个大阳线
+                name: DIM_NAME.BIG_UPPER_LINES,
+                operator: "=",
+                threshold: 1,
+              },
+              {
+                // 至少2个小阳线
+                name: DIM_NAME.SMALL_UPPER_LINES,
+                operator: ">=",
+                threshold: 2,
+              },
+              {
+                // 有一个阳上影线
+                name: DIM_NAME.YANG_UPPER_SHADOW_LINE,
+                operator: ">=",
+                threshold: 2,
+              },
+              // 每日换手率 >=1%
+              {
+                name: DIM_NAME.TURNOVER_RATE_PER_DAY,
+                operator: ">=",
+                threshold: 1,
+              },
+              // 每日换手率 <= 10%
+              {
+                name: DIM_NAME.TURNOVER_RATE_PER_DAY,
+                operator: "<=",
+                threshold: 10,
+              },
+              // 市值 <= 100亿
+              {
+                name: DIM_NAME.MARKET_TOTAL,
+                operator: "<=",
+                threshold: 100,
+              },
+              // 曲线趋势度
+              {
+                name: DIM_NAME.TREND_PERCENTAGE,
+                operator: "<=",
+                threshold: 3,
+              },
+            ],
+          },
+          {
+            disabled: false,
+            is_up_trend: true,
+            range_date: [
+              dayjs(startHistItem2?.日期),
+              dayjs(endHistItem2?.日期),
+            ],
+            dims_threshold: [
+              // 每日换手率 <= 10%
+              {
+                name: DIM_NAME.TURNOVER_RATE_PER_DAY,
+                operator: "<=",
+                threshold: 10,
+              },
+              // 曲线趋势度
+              {
+                name: DIM_NAME.TREND_PERCENTAGE,
+                operator: "<=",
+                threshold: 6,
+              },
+            ],
+          },
+        ],
+      };
+    },
+  },
 ];

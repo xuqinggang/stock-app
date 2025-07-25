@@ -45,11 +45,11 @@ export const isNoDownShadowLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
   const minData = Math.min(开盘, 收盘);
   return Math.abs(minData - 最低) <= 0 || Number((Math.abs(minData - 最低) / (开盘 * 0.1)).toFixed(4)) <= 0.15
 };
-// 是否小阳线(涨幅在[0, 2%]以内)
+// 是否小阳线(涨幅在[0, 3%]以内)
 export const ifSmallUpperLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
   const { 收盘, 最高, 最低 } = histItem;
   const 开盘 = getLastHistItem(histItem, allHistItem)?.收盘 || histItem.开盘;
-  return 收盘 >= 开盘 && Number(((收盘 - 开盘) / 开盘).toFixed(4)) <= 0.02;
+  return 收盘 >= 开盘 && Number(((收盘 - 开盘) / 开盘).toFixed(4)) <= 0.03;
 };
 // 大阳线 >= 3%,  [3%, ]
 export const ifBigUpperLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
@@ -70,3 +70,29 @@ export const ifSmallDownLines = (histItem: IDayK, allHistItem?: IDayK[]) => {
   const 开盘 = getLastHistItem(histItem, allHistItem)?.收盘 || histItem.开盘;
   return 收盘 <= 开盘 && Number(((收盘 - 开盘) / 开盘).toFixed(4)) >= -0.02;
 };
+
+// 站在5日均线的数量
+export const ifMA5 = (histItem: IDayK, allHistItem?: IDayK[]) => {
+    const { 收盘, 日期 } = histItem;
+    let maXNum = 5;
+    let sum = 0;
+    let tIndex = allHistItem?.findIndex(item => item.日期 === 日期);
+    while(tIndex && maXNum--) {
+      sum += (allHistItem?.[tIndex--]?.收盘 || 0);
+    }
+    const maPrice = Number(sum / 5);
+    return 收盘 >= maPrice;
+}
+
+// 站在5日均线的数量
+export const ifMA10 = (histItem: IDayK, allHistItem?: IDayK[]) => {
+    const { 收盘, 日期 } = histItem;
+    let maXNum = 10;
+    let sum = 0;
+    let tIndex = allHistItem?.findIndex(item => item.日期 === 日期);
+    while(tIndex && maXNum--) {
+      sum += (allHistItem?.[tIndex--]?.收盘 || 0);
+    }
+    const maPrice = Number(sum / 10);
+    return 收盘 >= maPrice;
+}

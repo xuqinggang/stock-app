@@ -19,6 +19,8 @@ import {
   isDownShadowLines,
   getLastHistItem,
   ifZhangTingLines,
+  ifMA5,
+  ifMA10,
 } from ".";
 import _ from "lodash-es";
 
@@ -128,7 +130,7 @@ export function formatStocksByIndicatorDims(
           const rangePoints = getPointsByDayK(stockHist);
           // 时间区间内是否上行
           const { isUp, percentage } = judgeIfUpTrend(rangePoints);
-          if (stockItem?.name === "中京电子") {
+          if (stockItem?.name === "横河精密") {
             console.log(
               "xxxxxx0000000999",
               stockItem,
@@ -499,8 +501,31 @@ export function formatStocksByIndicatorDims(
                   });
                   break;
                 }
-                // 上影小阴线
-                case DIM_NAME.SMALL_DOWN_LINES: {
+                // 当天盘价大于5日线均价数量
+                case DIM_NAME.MA5_LINES: {
+                  const filterCount = stockHist?.filter((histItem) => {
+                    return ifMA5(histItem, stockItem?.hist);
+                  })?.length;
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(filterCount, {
+                      operator,
+                      threshold: threshold,
+                    });
+                  });
+                  break;
+                }
+                // 当天盘价大于10日线均价数量
+                case DIM_NAME.MA10_LINES: {
+                  const filterCount = stockHist?.filter((histItem) => {
+                    return ifMA10(histItem, stockItem?.hist);
+                  })?.length;
+                  filterCondition.push(() => {
+                    return judgeMatchThreshold(filterCount, {
+                      operator,
+                      threshold: threshold,
+                    });
+                  });
+                  break;
                 }
                 default: {
                 }

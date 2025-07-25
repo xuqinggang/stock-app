@@ -170,7 +170,7 @@ export const FilterForm = observer((props: IProps) => {
         wrapperCol={{ span: 21 }}
         layout="horizontal"
         // disabled={componentDisabled}
-        style={{ maxWidth: 700 }}
+        style={{ maxWidth: 620 }}
       >
         <Form.Item name="template" label="选择模板">
           <Select className="!w-[300px]" options={templateOptions} onSelect={handleTemplateSelect}/>

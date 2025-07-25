@@ -28,13 +28,14 @@ const Index = observer(() => {
   const [formatStocks, setFormatStocks] = useImmer<IUpStockItemInfo[]>([]);
 
   const handleQuery = useMemoizedFn((dimsConditions: IDimsCondition[]) => {
-    const checkedCodes = getStorageCheckedStocks();
-    console.log("xxxxxhandleQuery-dimsCondition", dimsConditions);
     setDimsConditions(dimsConditions);
+
     if (dimsConditions) {
       const formatStocks = formatStocksByIndicatorDims(stocks, dimsConditions, {
         stockHotTopicMap,
       });
+      // 缓存里的, 需修正isChecked
+      const checkedCodes = getStorageCheckedStocks();
       formatStocks?.forEach(item => {
         if (checkedCodes?.includes(item.code)) {
           item.isChecked = true;
@@ -50,17 +51,15 @@ const Index = observer(() => {
   return (
     <StocksProvider>
       <div className="flex">
-        <div className="w-[720px]">
-          <FilterForm onQuery={handleQuery} />
-        </div>
-        <div>
-          <SelectStocksModule
+        <FilterForm onQuery={handleQuery} />
+        <div className="ml-[6px]">
+          {stocks?.length && <SelectStocksModule
             stocks={stocks}
             stockHotTopicMap={stockHotTopicMap}
             formatStocks={[...formatStocks]}
             dimsConditions={dimsConditions}
             setFormatStocks={setFormatStocks}
-          />
+          />}
         </div>
         {/* <Select
           mode="multiple"

@@ -4,36 +4,52 @@ import { IUpStockItemInfo } from "@api/types";
 import { useMemoizedFn } from "ahooks";
 import { Button, Tag } from "antd";
 import cls from "classnames";
-import { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import _ from "lodash-es";
 
 interface IProps {
   className?: string;
   formatStocks: IUpStockItemInfo[];
+  // checked=true的股票列表
+  checkedStocks: IUpStockItemInfo[];
   selectedStock?: IUpStockItemInfo | null;
-  onStockSelect?: (stockItem: IUpStockItemInfo, isSelected?: boolean, area?: 'sorted' | 'checked') => void;
+  onStockSelect?: (
+    stockItem: IUpStockItemInfo,
+    isSelected?: boolean,
+    area?: "sorted" | "checked"
+  ) => void;
+  onStockRemoveChecked?: (stockItem: IUpStockItemInfo) => void;
+  onStockWeightChecked?: (stockItem: IUpStockItemInfo) => void;
   // 点击选中的模块
-  clickedArea?: 'sorted' | 'checked';
+  clickedArea?: "sorted" | "checked";
 }
 
-export const CheckedStocksList = (props: IProps) => {
-  const { formatStocks, className, onStockSelect, selectedStock, clickedArea } = props;
+export const CheckedStocksList = memo((props: IProps) => {
+  const {
+    formatStocks,
+    className,
+    selectedStock,
+    clickedArea,
+    checkedStocks,
+    onStockSelect,
+    onStockRemoveChecked,
+    onStockWeightChecked,
+  } = props;
 
   const { stocksStore } = useStocks();
   const { stocks, setStorageCheckedStocks, getStorageCheckedStocks } =
     stocksStore;
-    console.log('xxxxxclicked', clickedArea);
 
-  const checkedStocks = useMemo(() => {
-    const checkedCodes = getStorageCheckedStocks();
-    const storageStocks = stocks?.filter((item) =>
-      checkedCodes?.includes(item.code)
-    );
-    return _.uniqBy(
-      [...storageStocks, ...formatStocks?.filter((item) => item.isChecked)],
-      "code"
-    );
-  }, [formatStocks]);
+  // const checkedStocksList = useMemo(() => {
+  //   const checkedCodes = getStorageCheckedStocks();
+  //   const storageStocks = checkedCodes?.map(code => {
+  //     return stocks?.find(item => item.code === code);
+  //   })
+  //   return _.uniqBy(
+  //     [...storageStocks, ...formatStocks?.filter((item) => item.isChecked)],
+  //     "code"
+  //   );
+  // }, [formatStocks]);
 
   // 本地保存
   const handleSaveClick = useMemoizedFn(() => {
@@ -50,21 +66,28 @@ export const CheckedStocksList = (props: IProps) => {
     const tIndex = checkedStocks?.findIndex(
       (item) => item.code === selectedStock.code
     );
-      console.log('xxxxxxxclickedup', clickedArea, e.code, tIndex, checkedStocks, selectedStock);
-    if (clickedArea !== 'checked' || tIndex === -1) {
+    console.log(
+      "xxxxxxxclickedup",
+      clickedArea,
+      e.code,
+      tIndex,
+      checkedStocks,
+      selectedStock
+    );
+    if (clickedArea !== "checked" || tIndex === -1) {
       return;
     }
     if (e.code === "Escape") {
     }
     if (e.code === "ArrowDown") {
       // 选择下一个
-      onStockSelect?.(checkedStocks[tIndex + 1] || null, true, 'checked');
+      onStockSelect?.(checkedStocks[tIndex + 1] || null, true, "checked");
       return false;
     }
     if (e.code === "ArrowUp") {
-      console.log('xxxxxxxclickedup', tIndex, checkedStocks);
+      console.log("xxxxxxxclickedup", tIndex, checkedStocks);
       // 选择上一个
-      onStockSelect?.(checkedStocks[tIndex - 1] || null, true, 'checked');
+      onStockSelect?.(checkedStocks[tIndex - 1] || null, true, "checked");
       return false;
     }
   });
@@ -103,22 +126,35 @@ export const CheckedStocksList = (props: IProps) => {
         style={{ border: "1px solid black" }}
       >
         {checkedStocks?.map((stockItem) => (
-          <div
-            className="flex items-center justify-between"
-            key={stockItem.code}
-          >
+          <div className="flex items-center gap-x-[2px]" key={stockItem?.code}>
             <Tag.CheckableTag
               className="cursor-pointer"
               key={stockItem?.code}
               checked={stockItem?.code === selectedStock?.code}
-              onChange={(check) => onStockSelect?.(stockItem, check, 'checked')}
+              onChange={(check) => onStockSelect?.(stockItem, check, "checked")}
             >
-              {stockItem.name} - 市值:{stockItem.market_recent?.toFixed(2)} -
+              {stockItem?.name} - 市值:{stockItem?.market_recent?.toFixed(2)} -
               营收:{stockItem.income_recent_year?.toFixed(2)}
             </Tag.CheckableTag>
+            <Button
+              className="px-0 mr-[2px]"
+              type="link"
+              size="small"
+              onClick={() => onStockRemoveChecked?.(stockItem)}
+            >
+              移除
+            </Button>
+            <Button
+              className="px-0"
+              type="link"
+              size="small"
+              onClick={() => onStockWeightChecked?.(stockItem)}
+            >
+              加权
+            </Button>
           </div>
         ))}
       </div>
     </div>
   );
-};
+});

@@ -14,6 +14,7 @@ import { IDimsCondition } from "@/types";
 import { SortedStocksList } from "./sorted-stocks-list";
 import { Updater } from "use-immer";
 import { CheckedStocksList } from "./checked-stocks-list";
+import { useStocks } from "@/provider/stocks-provider";
 
 interface IProps {
   stocksHotTopic?: IStockHotTopic[]; // 股票热点话题列表
@@ -31,7 +32,8 @@ export const SelectStocksModule = memo((props: IProps) => {
     dimsConditions,
     setFormatStocks,
   } = props;
-  console.log("xxxxSelectStocksModule", formatStocks);
+  const { stocksStore } = useStocks();
+  const { getStorageCheckedStocks } = stocksStore;
 
   const [clickedArea, setClickedArea] = useState<'sorted' | 'checked'>('sorted');
   // 可查看多个股票的自定义趋势图
@@ -39,6 +41,16 @@ export const SelectStocksModule = memo((props: IProps) => {
   // 选中的单个股票
   const [selectTagStock, setSelectTagStock] =
     useState<IUpStockItemInfo | null>();
+
+  // checked=true的股票列表
+  const [checkedStocks, setCheckedStocks] = useState<IUpStockItemInfo[]>(() => {
+    const checkedCodes = getStorageCheckedStocks();
+    console.log('xxxxxcheckedCodes', checkedCodes, stocks);
+    const storageStocks = checkedCodes?.map(code => {
+      return stocks?.find(item => item.code === code);
+    })?.filter(Boolean) as IUpStockItemInfo[];
+    return storageStocks;
+  });
 
   // 选中的股票, 热点话题/主营业务
   const selectStockHotTopic = useMemo(() => {
@@ -91,18 +103,30 @@ export const SelectStocksModule = memo((props: IProps) => {
   // 股票check选中
   const handleCheckStockItem = useMemoizedFn((stockItem: IUpStockItemInfo) => {
     console.log("xxxxhandleCheckStockItem", stockItem, formatStocks);
+
+    // 有则删除, 无则添加
+    const cIndex = checkedStocks?.findIndex(
+      (item) => item.code === stockItem.code
+    );
+    if (cIndex >= 0) {
+      setCheckedStocks(checkedStocks.filter((item) => item.code !== stockItem.code));
+    } else {
+      setCheckedStocks([...checkedStocks, stockItem]);
+    }
+
+    // 修改 checked 属性
     const tIndex = formatStocks?.findIndex(
       (item) => item.code === stockItem.code
     );
     setFormatStocks((draft) => {
-      console.log(
-        "xxxxhandleCheckStockItem xxxxxttt",
-        draft,
-        tIndex,
-        draft[tIndex]
-      );
       draft[tIndex].isChecked = !draft[tIndex].isChecked;
     });
+  });
+  // check选中的股票加权(放后)
+  const handleWeightCheckedStockItem = useMemoizedFn((stockItem: IUpStockItemInfo) => {
+    checkedStocks?.splice(checkedStocks?.findIndex(item => item.code === stockItem.code), 1);
+    checkedStocks.push(stockItem);
+    setCheckedStocks([...checkedStocks]);
   });
 
   const handleSelectStockChange = useMemoizedFn((value: string[]) => {
@@ -234,8 +258,11 @@ export const SelectStocksModule = memo((props: IProps) => {
         className="ml-[10px]"
         selectedStock={selectTagStock}
         onStockSelect={handleSelectClick}
+        checkedStocks={checkedStocks}
         formatStocks={formatStocks}
         clickedArea={clickedArea}
+        onStockRemoveChecked={handleCheckStockItem}
+        onStockWeightChecked={handleWeightCheckedStockItem}
       />
     </div>
   );

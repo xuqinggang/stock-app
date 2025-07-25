@@ -133,7 +133,7 @@ export class StocksStore {
     }
   };
 
-  getStorageCheckedStocks = () => {
+  getStorageCheckedStocks = (): string[] => {
     try {
       return JSON.parse(
         localStorage.getItem(STORAGE_CHECKED_STOCKS_KEY) as string
