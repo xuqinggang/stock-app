@@ -52,6 +52,7 @@ export const KLineChart = (props: IProps) => {
 
     chart?.applyNewData(hist);
 
+    chart?.zoomAtDataIndex(0.5, chart?.getDataList().length, 200)
     return () => {
       dispose("chart");
     };
