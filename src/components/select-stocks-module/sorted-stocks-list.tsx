@@ -4,7 +4,7 @@
 import { IUpStockItemInfo } from "@api/types";
 import { useMemoizedFn } from "ahooks";
 import { getStockAttributionCode } from "@/utils";
-import { Button, Card, Select, Space, Tag } from "antd";
+import { Button, Card, message, Select, Space, Tag } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { CheckSquareOutlined, PlusSquareOutlined } from "@ant-design/icons";
 import { Updater } from "use-immer";
@@ -12,7 +12,11 @@ import { Updater } from "use-immer";
 interface IProps {
   formatStocks: IUpStockItemInfo[];
   setFormatStocks: Updater<IUpStockItemInfo[]>;
-  onStockSelect?: (stockItem: IUpStockItemInfo, isSelected?: boolean, area?: 'sorted' | 'checked') => void;
+  onStockSelect?: (
+    stockItem: IUpStockItemInfo,
+    isSelected?: boolean,
+    area?: "sorted" | "checked"
+  ) => void;
   onStockCheck?: (stockItem: IUpStockItemInfo) => void;
 
   selectedStock?: IUpStockItemInfo | null;
@@ -74,6 +78,15 @@ export const SortedStocksList = (props: IProps) => {
     }
   });
 
+  // 复制导出股票
+  const exportStockClick = useMemoizedFn(async () => {
+    const copyText = formatStocks
+      ?.map((stock) => `${stock.name}(${stock.code})`)
+      .join("，");
+    await navigator.clipboard.writeText(copyText);
+    message.info("复制成功");
+  });
+
   useEffect(() => {
     //监听键盘事件
     document.addEventListener("keyup", PopupKeyUp, false);
@@ -129,6 +142,9 @@ export const SortedStocksList = (props: IProps) => {
               : "无"}
           </Button>
         </div>
+        <Button size="small" type="primary" onClick={exportStockClick}>
+          复制
+        </Button>
       </div>
       <div
         className="flex flex-col h-[calc(100vh-60px)] px-[3px] gap-y-[5px] overflow-y-auto"
@@ -148,7 +164,9 @@ export const SortedStocksList = (props: IProps) => {
                   className="cursor-pointer"
                   key={stockItem?.code}
                   checked={stockItem?.code === selectedStock?.code}
-                  onChange={(check) => onStockSelect?.(stockItem, check, 'sorted')}
+                  onChange={(check) =>
+                    onStockSelect?.(stockItem, check, "sorted")
+                  }
                 >
                   {stockItem.name} - 市值:{stockItem.market_recent?.toFixed(2)}{" "}
                   - 营收:{stockItem.income_recent_year?.toFixed(2)}

@@ -2,7 +2,7 @@ import { useStocks } from "@/provider/stocks-provider";
 import { getStockAttributionCode } from "@/utils";
 import { IUpStockItemInfo } from "@api/types";
 import { useMemoizedFn } from "ahooks";
-import { Button, Tag } from "antd";
+import { Button, message, Tag } from "antd";
 import cls from "classnames";
 import { memo, useEffect, useMemo } from "react";
 import _ from "lodash-es";
@@ -92,6 +92,15 @@ export const CheckedStocksList = memo((props: IProps) => {
     }
   });
 
+  // 复制导出股票
+  const exportStockClick = useMemoizedFn(async () => {
+    const copyText = checkedStocks
+      ?.map((stock) => `${stock.name}(${stock.code})`)
+      .join("，");
+    await navigator.clipboard.writeText(copyText);
+    message.info("复制成功");
+  });
+
   useEffect(() => {
     //监听键盘事件
     document.addEventListener("keyup", PopupKeyUp, false);
@@ -114,7 +123,10 @@ export const CheckedStocksList = memo((props: IProps) => {
 
   return (
     <div className={cls("flex flex-col", className)}>
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-x-[10px]">
+        <Button size="small" type="primary" onClick={exportStockClick}>
+          复制
+        </Button>
         <Button size="small" type="primary" onClick={handleSaveClick}>
           本地保存
         </Button>
