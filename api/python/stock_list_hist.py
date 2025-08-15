@@ -63,6 +63,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             # print("股票:", item["name"], index)
             start_date = (datetime.now() + timedelta(days=DIFF_DAY)).strftime("%Y%m%d")
             target_stock_hist = None
+            # 从原hist数组中找到目标股票
             target_stock_hist_item = stock_utils.dict_find_item(
                 stock_list_hist_json, item, "code"
             )
