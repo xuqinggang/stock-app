@@ -30,12 +30,15 @@ from datetime import date, datetime, timedelta
 
 
 def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
-    print("stock-list-hist.json 开始更新...", "N天前:", diff_day)
+    print("stock-list-hist2.json 开始更新...", "N天前:", diff_day)
     cur_path = os.path.abspath(os.path.dirname(__file__))
 
     stock_list_file_path = os.path.join(cur_path, "datas/stock-list.json")
 
+    # 初始hist json文件(已经满100M)
     stock_list_hist_file_path = os.path.join(cur_path, "datas/stock-list-hist.json")
+    # 新启hist2 json文件(读取新的hist数据追加到该文件)
+    stock_list_hist_file_path_2 = os.path.join(cur_path, "datas/stock-list-hist2.json")
 
     with open(stock_list_file_path, "r", encoding="utf-8") as stock_list_json_file:
         stock_list_json = json.load(stock_list_json_file)
@@ -99,10 +102,11 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
                 orient="records", force_ascii=False
             )
             stock_zh_a_hist_json = json.loads(stock_zh_a_hist_json_str)
+
             # 股票添加历史行情数组
-            if isinstance(target_stock_hist, list):
-                target_stock_hist.extend(stock_zh_a_hist_json)
-                stock_zh_a_hist_json = target_stock_hist
+            # if isinstance(target_stock_hist, list):
+            #     target_stock_hist.extend(stock_zh_a_hist_json)
+            #     stock_zh_a_hist_json = target_stock_hist
 
             item["hist"] = stock_zh_a_hist_json
             stock_list_info.append(item)
@@ -110,7 +114,7 @@ def update_stock_list_hist(diff_day=constant.HIST_DIFF_DAY):
             print(item["name"], e)
         stock_utils.process_bar(index + 1, stockLen)
 
-    with open(stock_list_hist_file_path, "w") as f:
+    with open(stock_list_hist_file_path_2, "w") as f:
         json.dump(stock_list_info, f, ensure_ascii=False)
-        print("stock-list-hist.json 更新股票数量: ", len(stock_list_info))
-        print("stock-list-hist.json 完成!!!")
+        print("stock-list-hist2.json 更新股票数量: ", len(stock_list_info))
+        print("stock-list-hist2.json 完成!!!")
