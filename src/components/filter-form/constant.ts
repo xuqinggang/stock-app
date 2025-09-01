@@ -498,4 +498,43 @@ export const FORM_TEMPLATE_LIST = [
       };
     },
   },
+  {
+    name: "近3天内3个小阳",
+    getFormValues: (stocks: IUpStockItemInfo[]) => {
+      const len = stocks?.[0]?.hist?.length;
+      const endHistItem = stocks?.[0]?.hist?.[len - 1]; // 21-24  6.27-18  
+      const startHistItem = stocks?.[0]?.hist?.[len - 3]; // 14-17 6.20-11
+
+      return {
+        dim_conditions: [
+          {
+            disabled: false,
+            is_up_trend: true,
+            // 最近3天
+            range_date: [dayjs(startHistItem?.日期), dayjs(endHistItem?.日期)],
+            dims_threshold: [
+              {
+                // 至少2个小阳线
+                name: DIM_NAME.SMALL_UPPER_LINES,
+                operator: ">=",
+                threshold: 3,
+              },
+              // 每日换手率 >=1%
+              {
+                name: DIM_NAME.TURNOVER_RATE_PER_DAY,
+                operator: ">=",
+                threshold: 1,
+              },
+              // 每日换手率 <= 10%
+              {
+                name: DIM_NAME.TURNOVER_RATE_PER_DAY,
+                operator: "<=",
+                threshold: 10,
+              },
+            ],
+          },
+        ],
+      };
+    },
+  },
 ];
