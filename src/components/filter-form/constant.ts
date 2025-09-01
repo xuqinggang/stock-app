@@ -537,4 +537,70 @@ export const FORM_TEMPLATE_LIST = [
       };
     },
   },
+  {
+    name: "近3天内前2天小阳最后1天大阳",
+    getFormValues: (stocks: IUpStockItemInfo[]) => {
+      const len = stocks?.[0]?.hist?.length;
+      const endHistItem = stocks?.[0]?.hist?.[len - 2]; 
+      const startHistItem = stocks?.[0]?.hist?.[len - 3]; 
+
+      const laststartEndHistItem = stocks?.[0]?.hist?.[len - 1];
+      return {
+        dim_conditions: [
+          {
+            disabled: false,
+            is_up_trend: true,
+            // 最近3天, 前2天小阳
+            range_date: [dayjs(startHistItem?.日期), dayjs(endHistItem?.日期)],
+            dims_threshold: [
+              {
+                // 至少2个小阳线
+                name: DIM_NAME.SMALL_UPPER_LINES,
+                operator: ">=",
+                threshold: 2,
+              },
+              // 每日换手率 >=1%
+              {
+                name: DIM_NAME.TURNOVER_RATE_PER_DAY,
+                operator: ">=",
+                threshold: 1,
+              },
+              // 每日换手率 <= 10%
+              {
+                name: DIM_NAME.TURNOVER_RATE_PER_DAY,
+                operator: "<=",
+                threshold: 10,
+              },
+            ],
+          },
+          {
+            disabled: false,
+            is_up_trend: false,
+            // 最近1天大阳
+            range_date: [dayjs(laststartEndHistItem?.日期), dayjs(laststartEndHistItem?.日期)],
+            dims_threshold: [
+              {
+                // 1个大阳线
+                name: DIM_NAME.BIG_UPPER_LINES,
+                operator: ">=",
+                threshold: 1,
+              },
+              // 每日换手率 >=1%
+              {
+                name: DIM_NAME.TURNOVER_RATE_PER_DAY,
+                operator: ">=",
+                threshold: 1,
+              },
+              // 每日换手率 <= 10%
+              {
+                name: DIM_NAME.TURNOVER_RATE_PER_DAY,
+                operator: "<=",
+                threshold: 15,
+              },
+            ],
+          },
+        ],
+      };
+    },
+  },
 ];
